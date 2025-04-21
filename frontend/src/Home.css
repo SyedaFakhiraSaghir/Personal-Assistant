@@ -1,0 +1,107 @@
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  background-image: url('./explore_page.jpg');  /* If the image is in the src/assets folder */
+  background-size: cover;
+  background-position: center;
+  height: 100vh;  /* Ensure it covers the entire screen */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* CSS Reset for Section and Headings */
+section {
+  margin: 0;
+  padding: 0;
+}
+
+.h1{
+  color: white;
+}/* General body styles */
+/* Apply margin adjustments to ensure correct spacing */
+section.centered {
+  margin-top: 0;
+}
+
+h1 {
+  margin-top: 10px;  /* Small spacing if needed */
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  gap: 15px;
+}
+
+.header {
+  width: 100%; /* Ensure the header spans the full width */
+  background-color: #cc92ff7e; /* Purple color */
+  display: flex;
+  justify-content: space-between; /* Align items within the header */
+  align-items: center; /* Center items vertically */
+  box-sizing: border-box; /* Include padding in width calculations */
+  position: fixed; /* Fix header at the top */
+  top: 0; /* Position it at the top of the page */
+  left: 0; /* Ensure it stretches across the full width */
+  z-index: 1000; /* Ensure it stays on top of other elements */
+}
+
+/* Float the link section to the right */
+.header-right {
+  display: flex;
+  gap: 5px; /* Add spacing between right-aligned links */
+  margin-left: auto; /* Push the explore link to the right */
+}
+
+.name{
+  color:white;
+}
+/* Main container styles */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 10px;
+  gap: 20px;
+
+  padding-top: 50px;
+}
+
+.btn head{
+  color: #f9f9f9;
+}
+/* Button styles */
+.btn {
+  background-color: #cde5ff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 10px;
+  cursor: pointer;
+  text-align: center;
+  min-width: 100px;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn:focus {
+  outline: none;
+}
+
+/* Footer styles */
+.footer {
+  text-align: center;
+  background-color: #ffffff00;
+  color: white;
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  font-size: 14px;
+  padding-top: 50px;
+}

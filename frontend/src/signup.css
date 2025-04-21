@@ -1,0 +1,71 @@
+/* Signup.css */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.signup-container {
+  background: linear-gradient(to bottom, #4e54c8, #8f94fb) !important; /* Purple gradient */
+  border-radius: 15px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: black;
+}
+
+.signup-container h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.signup-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.signup-container input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.signup-container input:focus {
+  border-color: #4CAF50;
+  outline: none;
+  box-shadow: 0px 0px 5px rgba(76, 175, 80, 0.5);
+}
+
+.signup-container button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+.signup-container button:hover {
+  background-color: #45a049;
+}
+
+.signup-container input::placeholder {
+  color: #aaa;
+}
+
+.signup-container button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

@@ -1,0 +1,115 @@
+:root {
+  --bg: #f7f7f7;
+  --text: #222;
+  --accent: #0077cc;
+  --card-bg: #fff;
+  --border: #ccc;
+}
+
+[data-theme="dark"] {
+  --bg: #121212;
+  --text: #e0e0e0;
+  --accent: #80d0ff;
+  --card-bg: #1e1e1e;
+  --border: #444;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.header {
+  padding: 20px;
+  background-color: var(--accent);
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+form {
+  background: var(--card-bg);
+  margin: 20px auto;
+  padding: 30px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  max-width: 600px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.mood-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.mood-btn {
+  padding: 10px 18px;
+  background-color: transparent;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.2s ease;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.mood-btn:hover,
+.mood-btn.selected {
+  background-color: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+textarea {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-top: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.submit-btn {
+  padding: 12px 30px;
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.dark-mode-toggle {
+  cursor: pointer;
+  font-size: 16px;
+  background: none;
+  border: none;
+  color: white;
+}
+
+.mood-history-container {
+  margin: 30px auto;
+  padding: 20px;
+  max-width: 95%;
+  background: var(--card-bg);
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}

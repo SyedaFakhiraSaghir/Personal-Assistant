@@ -1,0 +1,182 @@
+/* General Body Styling */
+body {
+  box-sizing: border-box;
+  font-family: 'Arial', sans-serif;
+  background-image: url("explore_page.jpg"); /* Deep Purple-blue gradient */
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+}
+/* Header */
+.header {
+    width: 100%; /* Ensure the header spans the full width */
+    background-color: #85A98F; /* Soft green */
+    padding: 20px 10px;
+    display: flex;
+    justify-content: space-between; /* Align items within the header */
+    align-items: center; /* Center items vertically */
+    box-sizing: border-box; /* Include padding in width calculations */
+}
+
+/* Style the header links */
+.header a {
+    color: #D3F1DF; /* Light green text */
+    text-align: center;
+    padding: 12px;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 25px;
+    border-radius: 4px;
+}
+
+/* Style the logo link */
+.header a.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+/* Style the active/current link */
+.header a.active {
+    background-color: #525B44; /* Dark green */
+    color: #D3F1DF; /* Light green text */
+}
+
+/* Float the link section to the right */
+.header-right {
+    display: flex;
+    gap: 15px; /* Add spacing between right-aligned links */
+}
+
+/* Notes App title */
+h1 {
+    color: #5A6C57; /* Darker green */
+    margin-bottom: 20px;
+    margin-top: 100px; /* Add space below the header */
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.label{
+  color: white;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Logo */
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+}
+
+/* Explore Button */
+.btns {
+  position:sticky;
+  top: 20px;
+  right: 20px;
+  padding: 10px 20px;
+  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
+  color: white;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.btns:hover {
+  background: #2575fc !important;
+}
+
+/* Background and Form Container */
+.background {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+form {
+  background: linear-gradient(to bottom, #6a11cb, #2575fc) !important; /* Purple gradient */
+  border-radius: 15px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
+  padding: 40px 30px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  color: black;
+}
+
+/* Heading */
+form h2 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Input Fields */
+input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  border-radius: 25px;
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #6a11cb;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 25px;
+  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
+  color: white;
+  font-size: 16px;
+  font-style: normal;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #2575fc !important;
+}
+
+/* Create Account Button */
+.btn-default {
+  margin-top: 10px;
+  padding: 10px 15px;
+  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
+  color: white;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 10px;
+  text-decoration: none;
+  border: none;
+  display: block;
+}
+
+.btn-default:hover {
+  background: #2575fc !important;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  form {
+    padding: 20px;
+    width: 90%;
+  }
+}
