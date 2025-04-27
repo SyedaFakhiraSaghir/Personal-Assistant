@@ -1,11 +1,13 @@
 /* FinanceTracker.module.css */
 
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #333;
+  margin-top: 2rem; /* Added space below header */
 }
 
 .header {
@@ -15,6 +17,9 @@
   justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo {
@@ -67,7 +72,7 @@
 }
 
 .main {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
 }
