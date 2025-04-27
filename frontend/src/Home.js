@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 
+import './components/styles.css'
+
 import ChatBot from "react-chatbotify";
 const Home = () => {
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ const Home = () => {
     }
   }, [userId, navigate]);
 
-  return (
+  return ( 
     <>
       <div className="header">
         <a href="#default" className="logo">RAAS</a>
