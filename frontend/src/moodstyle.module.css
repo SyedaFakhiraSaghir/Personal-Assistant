@@ -1,115 +1,212 @@
-:root {
-  --bg: #f7f7f7;
-  --text: #222;
-  --accent: #0077cc;
-  --card-bg: #fff;
-  --border: #ccc;
-}
-
-[data-theme="dark"] {
-  --bg: #121212;
-  --text: #e0e0e0;
-  --accent: #80d0ff;
-  --card-bg: #1e1e1e;
-  --border: #444;
-}
-
-body {
-  background-color: var(--bg);
-  color: var(--text);
+/* Reset and Base Styles */
+* {
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+html, body {
+  height: 100%;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Main App Container */
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: url('https://source.unsplash.com/1920x1080/?nature,mood') no-repeat center center/cover;
+}
+
+/* Fixed Header */
 .header {
-  padding: 20px;
-  background-color: var(--accent);
-  color: white;
+  width: 100%;
+  padding: 15px 30px;
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-.header a {
-  color: white;
-  text-decoration: none;
+.logo {
+  font-size: 24px;
   font-weight: bold;
+  color: #f4f4f9;
+  text-decoration: none;
 }
 
-form {
-  background: var(--card-bg);
-  margin: 20px auto;
-  padding: 30px;
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  max-width: 600px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-}
-
-.mood-buttons {
+.header-right {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  gap: 20px;
+}
+
+.btns {
+  background: transparent;
+  border: none;
+  color: #00b3b0;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: 'Poppins', sans-serif;
+  padding: 5px 10px;
+  transition: all 0.3s;
+}
+
+.btns:hover {
+  color: #f4f4f9;
+  transform: translateY(-2px);
+}
+
+/* Main Content Area */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  overflow-y: auto;
+}
+
+/* Form Section */
+.form-section {
+  display: flex;
   justify-content: center;
+  align-items: center;
+  padding: 40px 20px;
+  flex: 1;
+}
+
+.mood-form {
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.5);
+  margin: 20px 0;
+}
+
+.mood-form h2 {
+  color: #f4f4f9;
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+.mood-form p {
+  color: #f4f4f9;
+  font-size: 14px;
+  margin: 10px 0;
+}
+
+/* Mood Buttons Grid */
+.mood-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+@media (min-width: 600px) {
+  .mood-buttons {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .mood-btn {
-  padding: 10px 18px;
-  background-color: transparent;
-  border: 2px solid var(--border);
-  cursor: pointer;
-  border-radius: 30px;
-  transition: all 0.2s ease;
-  color: var(--text);
-  font-weight: 500;
-}
-
-.mood-btn:hover,
-.mood-btn.selected {
-  background-color: var(--accent);
-  color: white;
-  border-color: var(--accent);
-}
-
-textarea {
-  width: 100%;
   padding: 12px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  margin-top: 8px;
-  background: var(--bg);
-  color: var(--text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  background: #f4f4f9;
+  color: #333;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60px;
 }
 
+.mood-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.selected {
+  background: #00b3b0;
+  color: white;
+  font-weight: bold;
+  border: 2px solid white;
+}
+
+/* Description Field */
+.description {
+  width: 100%;
+  min-height: 120px;
+  padding: 15px;
+  border: none;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  margin: 15px 0;
+  background: #f4f4f9;
+}
+
+/* Submit Button */
 .submit-btn {
-  padding: 12px 30px;
-  background-color: var(--accent);
+  width: 100%;
+  padding: 15px;
+  background: #00b3b0;
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
-  margin-top: 20px;
+  transition: all 0.3s;
+  margin-top: 10px;
+}
+
+.submit-btn:hover {
+  background: #008b8a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
 }
 
 .submit-btn:disabled {
-  background-color: #ccc;
+  background: #cccccc;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-.dark-mode-toggle {
-  cursor: pointer;
-  font-size: 16px;
-  background: none;
-  border: none;
-  color: white;
-}
-
-.mood-history-container {
-  margin: 30px auto;
+/* Calendar Container */
+.calendar-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 40px auto;
   padding: 20px;
-  max-width: 95%;
-  background: var(--card-bg);
+  background: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* Calendar Overrides */
+.rbc-calendar {
+  background: white;
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.rbc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.rbc-toolbar button {
+  padding: 8px 16px !important;
+  border-radius: 6px !important;
 }

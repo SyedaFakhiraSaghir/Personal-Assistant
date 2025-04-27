@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import './Login.css';
+import './Login.module.css';
 import Validation from './LoginValidation';
 import axios from 'axios';
+import './components/styles.css'
 
 function Login() {
   const [values, setValues] = useState({ email: '', password: '' });
@@ -39,12 +40,13 @@ function Login() {
 
   return (
     <>
-      <div className="header">
+    <header>
         <a href="#default" className="logo">RAAS</a>
         <div className="header-right">
           <a className="btns" href="/explore">Explore</a>
-        </div>
+       
       </div>
+      </header>
       <p></p>
     <section>
         <form onSubmit={handleSubmit}>

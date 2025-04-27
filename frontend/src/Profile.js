@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './profile.css';
+import './profile.module.css';
 
 const Profile = () => {
   const userId = localStorage.getItem("userId");

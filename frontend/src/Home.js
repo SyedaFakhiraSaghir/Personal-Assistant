@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import "./Home.css";
+import "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 
 import ChatBot from "react-chatbotify";
