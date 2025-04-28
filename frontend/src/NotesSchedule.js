@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarAlt, faHeartbeat} from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const API_BASE_URL = 'http://localhost:9000';
 
-const NotesSchedule= () => {
+const NotesSchedule = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
-  // const location = useLocation();
-  // const searchParams = new URLSearchParams(location.search);
-  // const userIdFromUrl = searchParams.get('userId') || '';
-  console.log(userId);
+  
   // State for tabs
   const [activeTab, setActiveTab] = useState('notes');
   
@@ -122,7 +122,7 @@ const NotesSchedule= () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      fetchNotes(); // Refresh notes
+      fetchNotes();
     } catch (error) {
       console.error('Error deleting note:', error);
       setError(error.message || 'Failed to delete note. Please try again.');
@@ -166,7 +166,6 @@ const NotesSchedule= () => {
       const result = await response.json();
       setSuccessMessage(result.message);
 
-      // Reset form
       setNoteForm({
         title: '',
         description: '',
@@ -175,7 +174,6 @@ const NotesSchedule= () => {
       setShowAddNote(false);
       setEditingNoteId(null);
       
-      // Refresh notes
       fetchNotes();
     } catch (error) {
       console.error('Error saving note:', error);
@@ -263,7 +261,7 @@ const NotesSchedule= () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      fetchEvents(); // Refresh events
+      fetchEvents();
     } catch (error) {
       console.error('Error deleting event:', error);
       setError(error.message || 'Failed to delete event. Please try again.');
@@ -307,7 +305,6 @@ const NotesSchedule= () => {
       const result = await response.json();
       setSuccessMessage(result.message);
 
-      // Reset form
       setEventForm({
         eventName: '',
         date: '',
@@ -319,7 +316,6 @@ const NotesSchedule= () => {
       setShowAddEvent(false);
       setEditingEventId(null);
       
-      // Refresh events
       fetchEvents();
     } catch (error) {
       console.error('Error saving event:', error);
@@ -330,285 +326,409 @@ const NotesSchedule= () => {
   };
 
   return (
-    <>
-      <div className="header">
-        <a href="#default" className="logo">RAAS</a>
-        <div className="header-right">
-          <button className='btns' onClick={()=>navigate('/home')}>Home</button>
-          <button className="btns" onClick={() => navigate(`/Profile`)}>Profile</button>
-          <button className="btns" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
-        </div>
-      </div>
-      
-      <div className="notes-schedule-container">
-        <h2>Notes & Schedule Manager</h2>
-        
-        <div className="tab-buttons">
-          <button 
-            className={`tab-btn ${activeTab === 'notes' ? 'active' : ''}`}
-            onClick={() => setActiveTab('notes')}
-          >
-            Notes
+    <div style={{ backgroundColor: '#e2f1e7', minHeight: '100vh' }}>
+      <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: '#243642' }}>
+        <div className="container">
+          <a className="navbar-brand" href="#">ReminderHub</a>
+          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span className="navbar-toggler-icon"></span>
           </button>
-          <button 
-            className={`tab-btn ${activeTab === 'schedule' ? 'active' : ''}`}
-            onClick={() => setActiveTab('schedule')}
-          >
-            Schedule
-          </button>
+          <div className="collapse navbar-collapse" id="navbarNav">
+            <ul className="navbar-nav ms-auto">
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate('/home')}>Home</button>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate('/Profile')}>Profile</button>
+              </li>
+              <li className="nav-item">
+                <button className="nav-link btn btn-link" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>
+                  Notifications
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
+      </nav>
 
-        {error && <div className="error-message">{error}</div>}
-        {successMessage && <div className="success-message">{successMessage}</div>}
+      <header className="hero py-5" style={{
+        textAlign: 'center',
+        padding: '100px 0',
+        backgroundImage: 'url("https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        color: 'white'
+      }}>
+        <div className="container text-center">
+          <h1 className="display-4 mb-4">Never Miss a Deadline Again</h1>
+          <p className="lead mb-4">
+            ReminderHub helps you stay on top of your notes and events with timely reminders.
+          </p>
+        </div>
+      </header>
 
-        {/* Notes Section */}
-        {activeTab === 'notes' && (
-          <div className="notes-section">
-            <div className="button-group">
-              <button 
-                onClick={handleAddNoteClick}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Processing...' : 'Add Note'}
-              </button>
-              <button 
-                onClick={fetchNotes}
-                disabled={isLoading || !noteForm.userId}
-              >
-                {isLoading ? 'Loading...' : 'View Notes'}
-              </button>
-            </div>
-
-            {/* Add Note Form */}
-            <div 
-              className={`add-note-container ${showAddNote ? 'show' : ''}`}
-              style={{ display: showAddNote ? 'block' : 'none' }}
-            >
-              <form onSubmit={handleNoteSubmit}>
-                <div className="form-group">
-                  <label htmlFor="title">Title:</label>
-                  <input 
-                    type="text" 
-                    id="title" 
-                    name="title" 
-                    value={noteForm.title}
-                    onChange={(e) => handleInputChange(e, 'note')}
-                    disabled={isLoading}
-                    required
-                  />
+      <section className="py-5">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-6 mb-4">
+              <div className="card feature-card h-100" style={{ transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}>
+                <div className="card-body text-center">
+                  <FontAwesomeIcon icon={faCalendarAlt} className="fa-3x mb-3" style={{ color: '#629584' }} />
+                  <h3 className="card-title">Notes</h3>
+                  <p className="card-text">
+                    Keep track of important information, ideas, and thoughts.
+                  </p>
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={() => setActiveTab('notes')}
+                  >
+                    View Notes
+                  </button>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="description">Description:</label>
-                  <textarea 
-                    id="description" 
-                    name="description" 
-                    value={noteForm.description}
-                    onChange={(e) => handleInputChange(e, 'note')}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <button 
-                  type="submit" 
-                  disabled={isLoading || !noteForm.userId}
-                >
-                  {isLoading ? 'Saving...' : 'Save Note'}
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setShowAddNote(false)}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </button>
-              </form>
-            </div>
-
-            {/* Notes List */}
-            {notes.length > 0 && (
-              <div className="notes-list">
-                <h3>Your Notes</h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Title</th>
-                      <th>Description</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {notes.map(note => (
-                      <tr key={note.id}>
-                        <td>{note.title}</td>
-                        <td>{note.description}</td>
-                        <td className="actions">
-                          <button 
-                            onClick={() => editNote(note)}
-                            disabled={isLoading}
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            onClick={() => deleteNote(note.id)}
-                            disabled={isLoading}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Schedule Section */}
-        {activeTab === 'schedule' && (
-          <div className="schedule-section">
-            <div className="button-group">
-              <button 
-                onClick={handleAddEventClick}
-                disabled={isLoading}
-              >
-                {isLoading ? 'Processing...' : 'Add Event'}
-              </button>
-              <button 
-                onClick={fetchEvents}
-                disabled={isLoading || !eventForm.userId}
-              >
-                {isLoading ? 'Loading...' : 'View Schedule'}
-              </button>
             </div>
-
-            {/* Add Event Form */}
-            <div 
-              className={`add-event-container ${showAddEvent ? 'show' : ''}`}
-              style={{ display: showAddEvent ? 'block' : 'none' }}
-            >
-              <form onSubmit={handleEventSubmit}>
-                <div className="form-group">
-                  <label htmlFor="eventName">Event Name:</label>
-                  <input 
-                    type="text" 
-                    id="eventName" 
-                    name="eventName" 
-                    value={eventForm.eventName}
-                    onChange={(e) => handleInputChange(e, 'event')}
-                    disabled={isLoading}
-                    required
-                  />
+            <div className="col-md-6 mb-4">
+              <div className="card feature-card h-100" style={{ transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}>
+                <div className="card-body text-center">
+                  <FontAwesomeIcon icon={faHeartbeat} className="fa-3x mb-3" style={{ color: '#629584' }} />
+                  <h3 className="card-title">Schedule</h3>
+                  <p className="card-text">
+                    Manage your events, appointments, and important dates.
+                  </p>
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={() => setActiveTab('schedule')}
+                  >
+                    View Schedule
+                  </button>
                 </div>
-                <div className="form-group">
-                  <label htmlFor="date">Date:</label>
-                  <input 
-                    type="date" 
-                    id="date" 
-                    name="date" 
-                    value={eventForm.date}
-                    onChange={(e) => handleInputChange(e, 'event')}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="time">Time:</label>
-                  <input 
-                    type="time" 
-                    id="time" 
-                    name="time" 
-                    value={eventForm.time}
-                    onChange={(e) => handleInputChange(e, 'event')}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="venueOrLink">Venue/Meeting Link:</label>
-                  <input 
-                    type="text" 
-                    id="venueOrLink" 
-                    name="venueOrLink" 
-                    value={eventForm.venueOrLink}
-                    onChange={(e) => handleInputChange(e, 'event')}
-                    disabled={isLoading}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="details">Details:</label>
-                  <textarea 
-                    id="details" 
-                    name="details" 
-                    value={eventForm.details}
-                    onChange={(e) => handleInputChange(e, 'event')}
-                    disabled={isLoading}
-                  />
-                </div>
-                <button 
-                  type="submit" 
-                  disabled={isLoading || !eventForm.userId}
-                >
-                  {isLoading ? 'Saving...' : 'Save Event'}
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setShowAddEvent(false)}
-                  disabled={isLoading}
-                >
-                  Cancel
-                </button>
-              </form>
-            </div>
-
-            {/* Events List */}
-            {events.length > 0 && (
-              <div className="events-list">
-                <h3>Your Schedule</h3>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Event Name</th>
-                      <th>Date</th>
-                      <th>Time</th>
-                      <th>Venue/Link</th>
-                      <th>Details</th>
-                      <th>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {events.map(event => (
-                      <tr key={event.id}>
-                        <td>{event.eventName}</td>
-                        <td>{event.date}</td>
-                        <td>{event.time}</td>
-                        <td>{event.venueOrLink}</td>
-                        <td>{event.details}</td>
-                        <td className="actions">
-                          <button 
-                            onClick={() => editEvent(event)}
-                            disabled={isLoading}
-                          >
-                            Edit
-                          </button>
-                          <button 
-                            onClick={() => deleteEvent(event.id)}
-                            disabled={isLoading}
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
               </div>
-            )}
+            </div>
           </div>
-        )}
-      </div>
-    </>
+        </div>
+      </section>
+
+      {error && (
+        <div className="container">
+          <div className="alert alert-danger">{error}</div>
+        </div>
+      )}
+      {successMessage && (
+        <div className="container">
+          <div className="alert alert-success">{successMessage}</div>
+        </div>
+      )}
+
+      {/* Notes Section */}
+      {activeTab === 'notes' && (
+        <section id="add-reminder" className="py-5 bg-light">
+          <div className="container">
+            <h2 className="text-center mb-4">Notes Manager</h2>
+            <div className="row justify-content-center">
+              <div className="col-md-8">
+                <div className="d-flex justify-content-between mb-4">
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={handleAddNoteClick}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Processing...' : 'Add Note'}
+                  </button>
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={fetchNotes}
+                    disabled={isLoading || !noteForm.userId}
+                  >
+                    {isLoading ? 'Loading...' : 'Refresh Notes'}
+                  </button>
+                </div>
+
+                {showAddNote && (
+                  <div className="card shadow-sm mb-4">
+                    <div className="card-body">
+                      <form onSubmit={handleNoteSubmit}>
+                        <div className="mb-3">
+                          <label htmlFor="title" className="form-label">Title:</label>
+                          <input 
+                            type="text" 
+                            className="form-control" 
+                            id="title" 
+                            name="title" 
+                            value={noteForm.title}
+                            onChange={(e) => handleInputChange(e, 'note')}
+                            disabled={isLoading}
+                            required
+                          />
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="description" className="form-label">Description:</label>
+                          <textarea 
+                            className="form-control" 
+                            id="description" 
+                            name="description" 
+                            value={noteForm.description}
+                            onChange={(e) => handleInputChange(e, 'note')}
+                            disabled={isLoading}
+                            required
+                            rows="5"
+                          />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                          <button 
+                            type="button" 
+                            className="btn btn-secondary me-2"
+                            onClick={() => setShowAddNote(false)}
+                            disabled={isLoading}
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            type="submit" 
+                            className="btn" 
+                            style={{ backgroundColor: '#629584', color: 'white' }}
+                            disabled={isLoading || !noteForm.userId}
+                          >
+                            {isLoading ? 'Saving...' : 'Save Note'}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                {notes.length > 0 && (
+                  <div className="card shadow-sm">
+                    <div className="card-body">
+                      <h3 className="text-center mb-4">Your Notes</h3>
+                      <div className="table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Title</th>
+                              <th>Description</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {notes.map(note => (
+                              <tr key={note.id}>
+                                <td>{note.title}</td>
+                                <td>{note.description}</td>
+                                <td>
+                                  <button 
+                                    className="btn btn-sm btn-primary me-2"
+                                    onClick={() => editNote(note)}
+                                    disabled={isLoading}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => deleteNote(note.id)}
+                                    disabled={isLoading}
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Schedule Section */}
+      {activeTab === 'schedule' && (
+        <section id="upcoming" className="py-5">
+          <div className="container">
+            <h2 className="text-center mb-4">Schedule Manager</h2>
+            <div className="row justify-content-center">
+              <div className="col-md-10">
+                <div className="d-flex justify-content-between mb-4">
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={handleAddEventClick}
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Processing...' : 'Add Event'}
+                  </button>
+                  <button 
+                    className="btn" 
+                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    onClick={fetchEvents}
+                    disabled={isLoading || !eventForm.userId}
+                  >
+                    {isLoading ? 'Loading...' : 'Refresh Events'}
+                  </button>
+                </div>
+
+                {showAddEvent && (
+                  <div className="card shadow-sm mb-4">
+                    <div className="card-body">
+                      <form onSubmit={handleEventSubmit}>
+                        <div className="row">
+                          <div className="col-md-6 mb-3">
+                            <label htmlFor="eventName" className="form-label">Event Name:</label>
+                            <input 
+                              type="text" 
+                              className="form-control" 
+                              id="eventName" 
+                              name="eventName" 
+                              value={eventForm.eventName}
+                              onChange={(e) => handleInputChange(e, 'event')}
+                              disabled={isLoading}
+                              required
+                            />
+                          </div>
+                          <div className="col-md-6 mb-3">
+                            <label htmlFor="venueOrLink" className="form-label">Venue/Meeting Link:</label>
+                            <input 
+                              type="text" 
+                              className="form-control" 
+                              id="venueOrLink" 
+                              name="venueOrLink" 
+                              value={eventForm.venueOrLink}
+                              onChange={(e) => handleInputChange(e, 'event')}
+                              disabled={isLoading}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-6 mb-3">
+                            <label htmlFor="date" className="form-label">Date:</label>
+                            <input 
+                              type="date" 
+                              className="form-control" 
+                              id="date" 
+                              name="date" 
+                              value={eventForm.date}
+                              onChange={(e) => handleInputChange(e, 'event')}
+                              disabled={isLoading}
+                              required
+                            />
+                          </div>
+                          <div className="col-md-6 mb-3">
+                            <label htmlFor="time" className="form-label">Time:</label>
+                            <input 
+                              type="time" 
+                              className="form-control" 
+                              id="time" 
+                              name="time" 
+                              value={eventForm.time}
+                              onChange={(e) => handleInputChange(e, 'event')}
+                              disabled={isLoading}
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="mb-3">
+                          <label htmlFor="details" className="form-label">Details:</label>
+                          <textarea 
+                            className="form-control" 
+                            id="details" 
+                            name="details" 
+                            value={eventForm.details}
+                            onChange={(e) => handleInputChange(e, 'event')}
+                            disabled={isLoading}
+                            rows="3"
+                          />
+                        </div>
+                        <div className="d-flex justify-content-end">
+                          <button 
+                            type="button" 
+                            className="btn btn-secondary me-2"
+                            onClick={() => setShowAddEvent(false)}
+                            disabled={isLoading}
+                          >
+                            Cancel
+                          </button>
+                          <button 
+                            type="submit" 
+                            className="btn" 
+                            style={{ backgroundColor: '#629584', color: 'white' }}
+                            disabled={isLoading || !eventForm.userId}
+                          >
+                            {isLoading ? 'Saving...' : 'Save Event'}
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+
+                {events.length > 0 && (
+                  <div className="card shadow-sm">
+                    <div className="card-body">
+                      <h3 className="text-center mb-4">Your Events</h3>
+                      <div className="table-responsive">
+                        <table className="table">
+                          <thead>
+                            <tr>
+                              <th>Event Name</th>
+                              <th>Date</th>
+                              <th>Time</th>
+                              <th>Venue/Link</th>
+                              <th>Details</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {events.map(event => (
+                              <tr key={event.id}>
+                                <td>{event.eventName}</td>
+                                <td>{event.date}</td>
+                                <td>{event.time}</td>
+                                <td>{event.venueOrLink}</td>
+                                <td>{event.details}</td>
+                                <td>
+                                  <button 
+                                    className="btn btn-sm btn-primary me-2"
+                                    onClick={() => editEvent(event)}
+                                    disabled={isLoading}
+                                  >
+                                    Edit
+                                  </button>
+                                  <button 
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => deleteEvent(event.id)}
+                                    disabled={isLoading}
+                                  >
+                                    Delete
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <footer className="bg-dark text-white text-center py-3">
+        <div className="container">
+          <p className="mb-0">&copy; 2024 ReminderHub. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
   );
 };
 

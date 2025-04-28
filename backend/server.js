@@ -622,90 +622,178 @@ app.put('/profile/:userId/picture', upload.single('profile_picture'), (req, res)
   );
 });
 
-// Notes API using db.query with callbacks
-app.get('/api/notes',  validateUserId, async(req, res) => {
-  const { userId } = req.query;
+// Notes Routes
+app.get('/api/notes', validateUserId, (req, res) => {
+  const { userId } = req;
   
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is required' });
-  }
-
   db.query(
-    'SELECT * FROM notes WHERE user_id = ? ORDER BY created_at DESC',
+    'SELECT id, title, description, created_at, updated_at FROM notes WHERE user_id = ? ORDER BY updated_at DESC',
     [userId],
     (err, results) => {
       if (err) {
         console.error('Error fetching notes:', err);
-        return res.status(500).json({ message: 'Failed to fetch notes' });
+        return res.status(500).json({ error: 'Failed to fetch notes' });
       }
       res.json(results);
     }
   );
 });
 
-app.post('/api/notes',  validateUserId, async(req, res) => {
-  const { title, description, user_id } = req.body;
+app.post('/api/notes', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { title, description } = req.body;
   
-  if (!title || !description || !user_id) {
-    return res.status(400).json({ message: 'Missing required fields' });
+  if (!title || !description) {
+    return res.status(400).json({ error: 'Title and description are required' });
   }
 
   db.query(
     'INSERT INTO notes (title, description, user_id) VALUES (?, ?, ?)',
-    [title, description, user_id],
+    [title, description, userId],
     (err, result) => {
       if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ message: 'Failed to create note' });
+        console.error('Error creating note:', err);
+        return res.status(500).json({ error: 'Failed to create note' });
       }
-      res.json({ 
+      res.status(201).json({ 
         message: 'Note created successfully',
-        id: result.insertId
+        id: result.insertId 
       });
     }
   );
 });
 
-// Events API using db.query with callbacks
-app.get('/api/events',  validateUserId, async(req, res) => {
-  const { userId } = req.query;
+app.put('/api/notes/:id', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { id } = req.params;
+  const { title, description } = req.body;
   
-  if (!userId) {
-    return res.status(400).json({ message: 'User ID is required' });
+  if (!title || !description) {
+    return res.status(400).json({ error: 'Title and description are required' });
   }
 
   db.query(
-    'SELECT * FROM events WHERE user_id = ? ORDER BY date, time',
+    'UPDATE notes SET title = ?, description = ? WHERE id = ? AND user_id = ?',
+    [title, description, id, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error updating note:', err);
+        return res.status(500).json({ error: 'Failed to update note' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Note not found or not owned by user' });
+      }
+      res.json({ message: 'Note updated successfully' });
+    }
+  );
+});
+
+app.delete('/api/notes/:id', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { id } = req.params;
+  
+  db.query(
+    'DELETE FROM notes WHERE id = ? AND user_id = ?',
+    [id, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error deleting note:', err);
+        return res.status(500).json({ error: 'Failed to delete note' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Note not found or not owned by user' });
+      }
+      res.json({ message: 'Note deleted successfully' });
+    }
+  );
+});
+
+// Events Routes
+app.get('/api/events', validateUserId, (req, res) => {
+  const { userId } = req;
+  
+  db.query(
+    'SELECT id, event_name, date, time, venue_or_link, details, created_at, updated_at FROM events WHERE user_id = ? ORDER BY date, time',
     [userId],
     (err, results) => {
       if (err) {
         console.error('Error fetching events:', err);
-        return res.status(500).json({ message: 'Failed to fetch events' });
+        return res.status(500).json({ error: 'Failed to fetch events' });
       }
       res.json(results);
     }
   );
 });
 
-app.post('/api/events',  validateUserId, async(req, res) => {
-  const { event_name, date, time, venue_or_link, details, user_id } = req.body;
+app.post('/api/events', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { eventName, date, time, venueOrLink, details } = req.body;
   
-  if (!user_id) {
-    return res.status(400).json({ message: 'User ID is required' });
+  if (!eventName || !date || !time || !venueOrLink) {
+    return res.status(400).json({ 
+      error: 'Event name, date, time, and venue/link are required' 
+    });
   }
 
   db.query(
     'INSERT INTO events (event_name, date, time, venue_or_link, details, user_id) VALUES (?, ?, ?, ?, ?, ?)',
-    [event_name, date, time, venue_or_link, details, user_id],
+    [eventName, date, time, venueOrLink, details, userId],
     (err, result) => {
       if (err) {
         console.error('Error creating event:', err);
-        return res.status(500).json({ message: 'Failed to create event' });
+        return res.status(500).json({ error: 'Failed to create event' });
       }
-      res.json({ 
+      res.status(201).json({ 
         message: 'Event created successfully',
-        id: result.insertId
+        id: result.insertId 
       });
+    }
+  );
+});
+
+app.put('/api/events/:id', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { id } = req.params;
+  const { eventName, date, time, venueOrLink, details } = req.body;
+  
+  if (!eventName || !date || !time || !venueOrLink) {
+    return res.status(400).json({ 
+      error: 'Event name, date, time, and venue/link are required' 
+    });
+  }
+
+  db.query(
+    'UPDATE events SET event_name = ?, date = ?, time = ?, venue_or_link = ?, details = ? WHERE id = ? AND user_id = ?',
+    [eventName, date, time, venueOrLink, details, id, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error updating event:', err);
+        return res.status(500).json({ error: 'Failed to update event' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Event not found or not owned by user' });
+      }
+      res.json({ message: 'Event updated successfully' });
+    }
+  );
+});
+
+app.delete('/api/events/:id', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { id } = req.params;
+  
+  db.query(
+    'DELETE FROM events WHERE id = ? AND user_id = ?',
+    [id, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error deleting event:', err);
+        return res.status(500).json({ error: 'Failed to delete event' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Event not found or not owned by user' });
+      }
+      res.json({ message: 'Event deleted successfully' });
     }
   );
 });

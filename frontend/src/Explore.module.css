@@ -9,7 +9,7 @@ body {
 header {
   background-color: #4a90e2; /* Blue color for the header */
   padding-top: 20px;
-  padding-bottom: 100px;
+  padding-bottom: 400px;
   color: white;
   display: flex;
   justify-content: space-between;

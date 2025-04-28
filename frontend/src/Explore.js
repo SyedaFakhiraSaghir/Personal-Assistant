@@ -1,5 +1,5 @@
 import React from "react";
-import './Explore.css'
+import './Explore.module.css'
 
 const Explore = () => {
   return (
