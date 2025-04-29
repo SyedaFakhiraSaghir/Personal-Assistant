@@ -1040,6 +1040,128 @@ app.delete('/api/grocery/:id', async (req, res) => {
   }
 });
 
+// --books ==================================
+const quotes = [
+  {
+    quote: "The only way to do great work is to love what you do.",
+    author: "Steve Jobs"
+  },
+  {
+    quote: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+    author: "Winston Churchill"
+  },
+  {
+    quote: "Your time is limited, don't waste it living someone else's life.",
+    author: "Steve Jobs"
+  },
+  {
+    quote: "The future belongs to those who believe in the beauty of their dreams.",
+    author: "Eleanor Roosevelt"
+  },
+  {
+    quote: "Don't watch the clock; do what it does. Keep going.",
+    author: "Sam Levenson"
+  }
+];
+
+const booksDatabase = {
+  'self-help': [
+    {
+      title: "Atomic Habits",
+      author: "James Clear",
+      genre: "self-help",
+      reason: "Great for building good habits and breaking bad ones",
+      length: "medium"
+    },
+    {
+      title: "The 7 Habits of Highly Effective People",
+      author: "Stephen R. Covey",
+      genre: "self-help",
+      reason: "Timeless principles for personal and professional effectiveness",
+      length: "long"
+    }
+  ],
+  'business': [
+    {
+      title: "Good to Great",
+      author: "Jim Collins",
+      genre: "business",
+      reason: "Explains how companies transition from good to great",
+      length: "long"
+    },
+    {
+      title: "Lean Startup",
+      author: "Eric Ries",
+      genre: "business",
+      reason: "Great for entrepreneurs starting new ventures",
+      length: "medium"
+    }
+  ],
+  'biography': [
+    {
+      title: "Steve Jobs",
+      author: "Walter Isaacson",
+      genre: "biography",
+      reason: "Inspirational story of Apple's co-founder",
+      length: "long"
+    },
+    {
+      title: "Becoming",
+      author: "Michelle Obama",
+      genre: "biography",
+      reason: "Insightful memoir of the former First Lady",
+      length: "medium"
+    }
+  ],
+  'fiction': [
+    {
+      title: "The Alchemist",
+      author: "Paulo Coelho",
+      genre: "fiction",
+      reason: "Motivational story about pursuing your dreams",
+      length: "short"
+    },
+    {
+      title: "Man's Search for Meaning",
+      author: "Viktor E. Frankl",
+      genre: "fiction",
+      reason: "Powerful story about finding purpose in life",
+      length: "short"
+    }
+  ]
+};
+
+// Routes
+app.get('/api/quotes/random', (req, res) => {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  res.json(quotes[randomIndex]);
+});
+
+app.post('/api/books/suggest', (req, res) => {
+  const { genre, mood, length } = req.body;
+  
+  // Filter books based on preferences
+  let suggestions = booksDatabase[genre] || [];
+  
+  // Further filtering based on mood (simplified for example)
+  if (mood === 'stressed') {
+    suggestions = suggestions.filter(book => book.genre === 'self-help' || book.genre === 'fiction');
+  } else if (mood === 'unfocused') {
+    suggestions = suggestions.filter(book => book.genre === 'self-help' || book.genre === 'business');
+  }
+  
+  // Filter by length
+  suggestions = suggestions.filter(book => book.length === length);
+  
+  // If no suggestions, return some defaults
+  if (suggestions.length === 0) {
+    suggestions = booksDatabase['self-help'].slice(0, 2);
+  }
+  
+  // Limit to 3 suggestions
+  res.json(suggestions.slice(0, 3));
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

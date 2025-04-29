@@ -36,6 +36,7 @@ const Home = () => {
           <button className={styles.btns} onClick={handleLogout}>
             <FiLogOut /> Logout
           </button>
+          <ChatBot></ChatBot>
         </div>
       </header>
 
