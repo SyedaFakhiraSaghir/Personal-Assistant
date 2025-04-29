@@ -680,9 +680,9 @@ app.post('/api/notes', validateUserId, (req, res) => {
 });
 
 app.put('/api/notes/:id', validateUserId, (req, res) => {
-  const { userId } = req;
+  const { userId } = req;  // This should come from validateUserId middleware
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description } = req.body;  // Get these from body
   
   if (!title || !description) {
     return res.status(400).json({ error: 'Title and description are required' });
@@ -807,7 +807,7 @@ app.delete('/api/events/:id', validateUserId, (req, res) => {
         return res.status(500).json({ error: 'Failed to delete event' });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Event not found or not owned by user' });
+        return res.status(404).json({ error: 'event not found or not owned by user' });
       }
       res.json({ message: 'Event deleted successfully' });
     }
