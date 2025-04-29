@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './profile.module.css';
+// import { Calendar } from "react-big-calendar";
+import { momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+// import "react-big-calendar/lib/css/react-big-calendar.css";
+import styles from './profile.module.css';
+import { useNavigate } from "react-router-dom";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   const [profile, setProfile] = useState({
     name: '',
@@ -47,7 +53,6 @@ const Profile = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Check file type
       if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
         alert('Please upload a JPEG, JPG, or PNG file');
         return;
@@ -79,7 +84,7 @@ const Profile = () => {
         profile_picture: response.data.profile_picture
       }));
       alert('Profile picture updated successfully!');
-      setSelectedFile(null); // Reset selected file after upload
+      setSelectedFile(null);
     } catch (error) {
       console.error('Error uploading profile picture:', error);
       alert('Failed to upload profile picture');
@@ -96,10 +101,8 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-
     try {
       await axios.put(`http://localhost:9000/profile/${userId}`, formData);
-      
       setProfile(prev => ({
         ...prev,
         ...formData
@@ -112,142 +115,223 @@ const Profile = () => {
     }
   };
 
+  const [moods, setMoods] = useState([]);
+  const localizer = momentLocalizer(moment);
+
+  useEffect(() => {
+    if (!userId) {
+      console.error("User ID is not available.");
+      return;
+    }
+
+    const fetchMoods = async () => {
+      try {
+        const response = await axios.get(`http://localhost:9000/api/moods/${userId}`);
+        setMoods(response.data);
+      } catch (error) {
+        console.error("Error fetching moods:", error);
+      }
+    };
+
+    fetchMoods();
+  }, [userId]);
+
+  const events = moods.map((mood) => ({
+    title: mood.mood,
+    start: new Date(mood.created_at),
+    end: new Date(mood.created_at),
+    desc: mood.description,
+  }));
+
   return (
-    <div className="profile-page">
-      <div className="header">
-        <a href="#default" className="logo">RAAS</a>
-        <div className="header-right">
-          <a className="active" href="http://localhost:3000/home">Home</a>
+    <>
+      <header className={styles.header}>
+        <a href="#default" className={styles.logo}>RAAS</a>
+        <div className={styles.headerRight}>
+          <button className={styles.btns} onClick={() => navigate(`/home`)}>
+            Home
+          </button>
+          <button className={styles.btns} onClick={() => navigate(`/`)}>
+            Login
+          </button>
+          <button className={styles.btns} onClick={() => navigate(`/signup`)}>
+            Signup
+          </button>
         </div>
-      </div>
-      
-      <div className="profile-container">
-        <div className="profile-header">
-          <h2>User Profile</h2>
-          {!isEditing ? (
-            <button 
-              onClick={() => setIsEditing(true)}
-              className="edit-button"
-            >
-              Edit Profile
-            </button>
-          ) : (
-            <div className="edit-mode-actions">
+      </header>
+
+      <div className={styles["profile-page"]}>
+        <div className={styles["profile-container"]}>
+          <div className={styles["profile-header"]}>
+            <h2>User Profile</h2>
+            {!isEditing ? (
               <button 
-                onClick={() => {
-                  setIsEditing(false);
-                  setSelectedFile(null);
-                  setFormData({
-                    name: profile.name,
-                    email: profile.email,
-                    age: profile.age,
-                    phone_number: profile.phone_number
-                  });
-                  if (profile.profile_picture) {
-                    setPreviewImage(`http://localhost:9000/${profile.profile_picture}`);
-                  } else {
-                    setPreviewImage('');
-                  }
-                }}
-                className="cancel-button"
+                onClick={() => setIsEditing(true)}
+                className={styles["edit-button"]}
               >
-                Cancel
+                Edit Profile
               </button>
-              <button 
-                onClick={handleUpdateProfile}
-                className="save-button"
-              >
-                Save Changes
-              </button>
-            </div>
-          )}
-        </div>
-        
-        <div className="profile-content">
-          <div className="profile-picture-section">
-            <div className="profile-picture-container">
-              {previewImage ? (
-                <img src={previewImage} alt="Profile" className="profile-picture" />
-              ) : (
-                <div className="profile-picture-placeholder">
-                  {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
-                </div>
-              )}
-            </div>
-            
-            {isEditing && (
-              <div className="picture-upload-controls">
-                <input
-                  type="file"
-                  id="profile-picture-upload"
-                  accept="image/png, image/jpeg, image/jpg"
-                  onChange={handleFileChange}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="profile-picture-upload" className="upload-button">
-                  Choose Image (PNG, JPEG)
-                </label>
-                {selectedFile && (
-                  <button 
-                    type="button" 
-                    onClick={uploadProfilePicture}
-                    className="save-picture-button"
-                  >
-                    Save Picture
-                  </button>
-                )}
+            ) : (
+              <div className={styles["edit-mode-actions"]}>
+                <button 
+                  onClick={() => {
+                    setIsEditing(false);
+                    setSelectedFile(null);
+                    setFormData({
+                      name: profile.name,
+                      email: profile.email,
+                      age: profile.age,
+                      phone_number: profile.phone_number
+                    });
+                    if (profile.profile_picture) {
+                      setPreviewImage(`http://localhost:9000/${profile.profile_picture}`);
+                    } else {
+                      setPreviewImage('');
+                    }
+                  }}
+                  className={styles["cancel-button"]}
+                >
+                  Cancel
+                </button>
+                <button 
+                  onClick={handleUpdateProfile}
+                  className={styles["save-button"]}
+                >
+                  Save Changes
+                </button>
               </div>
             )}
           </div>
           
-          <form className="profile-form">
-            <div className="form-group">
-              <label>Name:</label>
-              <input
-                type="text"
-                name="name"
-                value={isEditing ? formData.name : profile.name}
-                disabled={!isEditing}
-                onChange={handleInputChange}
-              />
+          {!isEditing ? (
+            <div className={styles["profile-content"]}>
+              <div className={styles["profile-picture-section"]}>
+                <div className={styles["profile-picture-container"]}>
+                  {previewImage ? (
+                    <img src={previewImage} alt="Profile" className={styles["profile-picture"]} />
+                  ) : (
+                    <div className={styles["profile-picture-placeholder"]}>
+                      {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              <div className={styles["profile-info"]}>
+                <div className={styles["info-group"]}>
+                  <label>Name:</label>
+                  <p>{profile.name}</p>
+                </div>
+                <div className={styles["info-group"]}>
+                  <label>Email:</label>
+                  <p>{profile.email}</p>
+                </div>
+                <div className={styles["info-group"]}>
+                  <label>Age:</label>
+                  <p>{profile.age}</p>
+                </div>
+                <div className={styles["info-group"]}>
+                  <label>Phone Number:</label>
+                  <p>{profile.phone_number}</p>
+                </div>
+              </div>
             </div>
-            
-            <div className="form-group">
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={isEditing ? formData.email : profile.email}
-                disabled={!isEditing}
-                onChange={handleInputChange}
-              />
+          ) : (
+            <div className={styles["edit-form-overlay"]}>
+              <div className={styles["profile-content"]}>
+                <div className={styles["profile-picture-section"]}>
+                  <div className={styles["profile-picture-container"]}>
+                    {previewImage ? (
+                      <img src={previewImage} alt="Profile" className={styles["profile-picture"]} />
+                    ) : (
+                      <div className={styles["profile-picture-placeholder"]}>
+                        {profile.name ? profile.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className={styles["picture-upload-controls"]}>
+                    <input
+                      type="file"
+                      id="profile-picture-upload"
+                      accept="image/png, image/jpeg, image/jpg"
+                      onChange={handleFileChange}
+                      style={{ display: 'none' }}
+                    />
+                    <label htmlFor="profile-picture-upload" className={styles["upload-button"]}>
+                      Choose Image (PNG, JPEG)
+                    </label>
+                    {selectedFile && (
+                      <button 
+                        type="button" 
+                        onClick={uploadProfilePicture}
+                        className={styles["save-picture-button"]}
+                      >
+                        Save Picture
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                <form className={styles["profile-form"]}>
+                  <div className={styles["form-group"]}>
+                    <label>Name:</label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  
+                  <div className={styles["form-group"]}>
+                    <label>Email:</label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  
+                  <div className={styles["form-group"]}>
+                    <label>Age:</label>
+                    <input
+                      type="number"
+                      name="age"
+                      value={formData.age}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                  
+                  <div className={styles["form-group"]}>
+                    <label>Phone Number:</label>
+                    <input
+                      type="text"
+                      name="phone_number"
+                      value={formData.phone_number}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+                </form>
+              </div>
             </div>
-            
-            <div className="form-group">
-              <label>Age:</label>
-              <input
-                type="number"
-                name="age"
-                value={isEditing ? formData.age : profile.age}
-                disabled={!isEditing}
-                onChange={handleInputChange}
-              />
-            </div>
-            
-            <div className="form-group">
-              <label>Phone Number:</label>
-              <input
-                type="text"
-                name="phone_number"
-                value={isEditing ? formData.phone_number : profile.phone_number}
-                disabled={!isEditing}
-                onChange={handleInputChange}
-              />
-            </div>
-          </form>
+          )}
         </div>
+
+        {/* <div className={styles["calendar-container"]}>
+          <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Mood History</h2>
+          <Calendar
+            localizer={localizer}
+            events={events}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 500 }}
+            className={styles["rbc-calendar"]}
+          />
+        </div> */}
       </div>
-    </div>
+    </>
   );
 };
 

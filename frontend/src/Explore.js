@@ -1,21 +1,26 @@
 import React from "react";
-import './Explore.module.css'
+import styles from './Explore.module.css'
+import { useNavigate } from "react-router-dom";
 
 const Explore = () => {
+
+  const navigate= useNavigate();
   return (
+    
     <>
       {/* Header */}
-      <header className="header">
-        <a href="#default" className="logo">
-          RAAS
-        </a>
-        <div className="header-right">
-          <a className="active" href="http://localhost:3000/">
+      <header className={styles.header}>
+        <a href="#default" className={styles.logo}>RAAS</a>
+        <div className={styles.headerRight}>
+          <button className={styles.btns} onClick={() => navigate(`/home`)}>
+            Home
+          </button>
+          <button className={styles.btns} onClick={() => navigate(`/`)}>
             Login
-          </a>
-          <a className="active" href="http://localhost:3000/signup">
-            Signup
-          </a>
+          </button>
+          <button className={styles.btns} onClick={() => navigate(`/signup`)}>
+             signup
+          </button>
         </div>
       </header>
 
