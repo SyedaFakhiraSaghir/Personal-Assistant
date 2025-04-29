@@ -336,6 +336,22 @@ app.post('/api/health', validateUserId, (req, res) => {
     res.json({ message: id ? 'Record updated successfully' : 'Record added successfully' });
   });
 });
+app.put('/api/health/:id', validateUserId, (req, res) => {
+  const { healthTips, steps, workout, waterIntake } = req.body;
+  const { userId } = req;
+  const { id } = req.params;
+
+  const query = `UPDATE health SET healthTips = ?, steps = ?, workout = ?, waterIntake = ? WHERE id = ? AND userId = ?`;
+  const params = [healthTips, steps, workout, waterIntake, id, userId];
+
+  db.query(query, params, (err) => {
+    if (err) {
+      console.error('Error updating record:', err);
+      return res.status(500).json({ message: 'Failed to update record' });
+    }
+    res.json({ message: 'Record updated successfully' });
+  });
+});
 
 app.get('/api/health', validateUserId, (req, res) => {
   const { userId } = req;
