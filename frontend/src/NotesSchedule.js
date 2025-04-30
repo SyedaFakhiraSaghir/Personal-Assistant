@@ -375,30 +375,19 @@ const NotesSchedule = () => {
   };
 
   return (
+    <>
+    <div className="app-container">
+    {/* Header */}
+    <header className="header">
+      <a href="#default" className="logo">RAAS</a>
+      <div className="header-actions">
+        <button className="header-btn" onClick={() => navigate(`/`)}>
+          Home
+        </button>
+      </div>
+    </header>
     <div style={{ backgroundColor: '#e2f1e7', minHeight: '100vh' }}>
-      <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: '#243642' }}>
-        <div className="container">
-          <a className="navbar-brand" href="#">ReminderHub</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate('/home')}>Home</button>
-              </li>
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate('/Profile')}>Profile</button>
-              </li>
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>
-                  Notifications
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
+      
 
       <header className="hero py-5" style={{
         textAlign: 'center',
@@ -778,6 +767,8 @@ const NotesSchedule = () => {
         </div>
       </footer>
     </div>
+    </div>
+    </>
   );
 };
 

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
+import { useNavigate } from 'react-router-dom';
 const MotivationalApp = () => {
+  const navigate=useNavigate();
   const [quote, setQuote] = useState('');
   const [author, setAuthor] = useState('');
   const [books, setBooks] = useState([]);
@@ -58,6 +59,18 @@ const MotivationalApp = () => {
   };
 
   return (
+    <>
+    <div className="app-container">
+    {/* Header */}
+    <header className="header">
+      <a href="#default" className="logo">RAAS</a>
+      <div className="header-actions">
+        <button className="header-btn" onClick={() => navigate(`/`)}>
+          Home
+        </button>
+      </div>
+    </header>
+    </div>
     <div className="container">
       <h1>Motivational Quotes & Book Suggestions</h1>
       
@@ -223,6 +236,7 @@ const MotivationalApp = () => {
         }
       `}</style>
     </div>
+    </>
   );
 };
 

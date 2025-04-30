@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
+import styles from './profile.module.css';
 const NotificationReminder=() =>{
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -11,13 +12,12 @@ return (
   <>
   
   
-  <div className="header">
-      <a href="#default" className="logo">RAAS</a>
-      <div className="header-right">
-        <button className="btns" onClick={() => navigate(`/Profile`)}>Profile</button>
-        <button className="btns" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
-      </div>
-  </div>
+  <header className={styles.header}>
+    <a href="#default" className={styles.logo}>RAAS</a>
+    <div className={styles["header-right"]}>
+      <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
+    </div>
+  </header>
     <div>NotificationReminder</div>
     </>
   )

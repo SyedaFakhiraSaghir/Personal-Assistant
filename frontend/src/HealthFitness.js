@@ -201,16 +201,17 @@ const navigate = useNavigate();
 
     return (
         <>
-
-  
-  <div className="header">
-  <a href="#default" className="logo">RAAS</a>
-  <div className="header-right">
-     <button className='btns' onClick={()=>navigate('/home')}>Home</button>
-    <button className="btns" onClick={() => navigate(`/Profile`)}>Profile</button>
-    <button className="btns" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
-  </div>
-</div>
+        <div className="app-container">
+            {/* Header */}
+            <header className="header">
+            <a href="#default" className="logo">RAAS</a>
+            <div className="header-actions">
+                <button className="header-btn" onClick={() => navigate(`/`)}>
+                Home
+                </button>
+            </div>
+            </header>
+        </div>
         <div className="health-tracker-container">
             <h2>Health & Fitness Tracker</h2>
             
