@@ -38,6 +38,7 @@ function Login() {
   };
 
   return (
+<<<<<<< HEAD
     <div className={styles.wrapper}>
       <header className={styles.header}>
         <a href="/" className={styles.logo}>RAAS</a>
@@ -90,6 +91,58 @@ function Login() {
         <Link to="/Signup" className={styles.createAccountBtn}>Create Account</Link>
       </form>
     </div>
+=======
+    <>
+    <div className="app-container">
+    {/* Header */}
+    <header className="header">
+      <a href="#default" className="logo">RAAS</a>
+      <div className="header-actions">
+        <button className="header-btn" onClick={() => navigate(`explore`)}>
+          Explore
+        </button>
+      </div>
+    </header>
+    </div>
+      <p></p>
+    <section>
+        <form onSubmit={handleSubmit}>
+          <h1>LOG IN</h1>
+          <div>
+            <label className="label" htmlFor="email-input"><strong>Email</strong></label>
+            <input
+              id="email-input"
+              name="email"
+              type="email"
+              placeholder="Enter Email"
+              value={values.email}
+              onChange={handleInput}
+              className="form-control"
+              autoComplete="email"
+              aria-label="Enter your email"
+            />
+            {errors.email && <span className="text-danger">{errors.email}</span>}
+            <label className="label" htmlFor="password-input"><strong>Password</strong></label>
+            <input
+              id="password-input"
+              name="password"
+              type="password"
+              placeholder="Enter Password"
+              value={values.password}
+              onChange={handleInput}
+              className="form-control"
+              autoComplete="current-password"
+              aria-label="Enter your password"
+            />
+            {errors.password && <span className="text-danger">{errors.password}</span>}
+          </div>
+          <button className="btn-default" type="submit">Login</button>
+          <p>You agree to our terms and policies</p>
+          <Link to="/Signup" className="btn-default">Create account</Link>
+        </form>
+      </section>
+    </>
+>>>>>>> 061fef21a3b16b01295b56801c0867cc5709d30b
   );
 }
 

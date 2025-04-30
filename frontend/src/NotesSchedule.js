@@ -95,7 +95,7 @@ const NotesSchedule = () => {
     setNoteForm({
       title: note.title,
       description: note.description,
-      userId: note.userId
+      userId: userId // Make sure to include the current userId
     });
     setEditingNoteId(note.id);
     setError('');
@@ -104,23 +104,27 @@ const NotesSchedule = () => {
 
   const deleteNote = async (id) => {
     if (!window.confirm('Are you sure you want to delete this note?')) return;
-
+  
     setIsLoading(true);
     setError('');
     setSuccessMessage('');
-
+  
     try {
+      console.log(`Deleting note ${id} for user ${userId}`); // Debug log
       const response = await fetch(`${API_BASE_URL}/api/notes/${id}?userId=${userId}`, { 
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }
       });
       
+      console.log('Delete response status:', response.status); // Debug log
+      
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Failed to delete note');
       }
-
+  
       const result = await response.json();
+      console.log('Delete result:', result); // Debug log
       setSuccessMessage(result.message);
       fetchNotes();
     } catch (error) {
@@ -134,38 +138,51 @@ const NotesSchedule = () => {
   const handleNoteSubmit = async (e) => {
     e.preventDefault();
     
-    if (!noteForm.userId) {
+    if (!userId) {
       setError('User ID is required');
       return;
     }
-
+    
+    // Validate required fields
+    if (!noteForm.title.trim() || !noteForm.description.trim()) {
+      setError('Title and description are required');
+      return;
+    }
+  
     setIsLoading(true);
     setError('');
     setSuccessMessage('');
-
+  
     try {
       const endpoint = editingNoteId 
-        ? `${API_BASE_URL}/api/notes/${editingNoteId}`
-        : `${API_BASE_URL}/api/notes`;
+        ? `${API_BASE_URL}/api/notes/${editingNoteId}?userId=${userId}`
+        : `${API_BASE_URL}/api/notes?userId=${userId}`;
       
       const method = editingNoteId ? 'PUT' : 'POST';
-
+  
+      // Create the request body - same structure for both POST and PUT
+      const requestBody = {
+        title: noteForm.title,
+        description: noteForm.description
+      };
+  
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(noteForm),
+        body: JSON.stringify(requestBody),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save note');
+        throw new Error(errorData.error || 'Failed to save note');
       }
-
+  
       const result = await response.json();
       setSuccessMessage(result.message);
-
+  
+      // Reset form
       setNoteForm({
         title: '',
         description: '',
@@ -174,6 +191,7 @@ const NotesSchedule = () => {
       setShowAddNote(false);
       setEditingNoteId(null);
       
+      // Refresh notes list
       fetchNotes();
     } catch (error) {
       console.error('Error saving note:', error);
@@ -224,17 +242,34 @@ const NotesSchedule = () => {
     } finally {
       setIsLoading(false);
     }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/events?userId=${userId}`);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch events');
+      }
+      const eventsData = await response.json();
+      console.log('Fetched events:', eventsData); // Debug log
+      setEvents(eventsData);
+      setActiveTab('schedule');
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      setError(error.message || 'Failed to fetch events. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  
   const editEvent = (event) => {
     setShowAddEvent(true);
     setEventForm({
-      eventName: event.eventName,
+      eventName: event.event_name || event.eventName, // Handle both cases
       date: event.date,
       time: event.time,
-      venueOrLink: event.venueOrLink,
-      details: event.details,
-      userId: event.userId
+      venueOrLink: event.venue_or_link || event.venueOrLink, // Handle both cases
+      details: event.details || '',
+      userId: userId
     });
     setEditingEventId(event.id);
     setError('');
@@ -273,38 +308,51 @@ const NotesSchedule = () => {
   const handleEventSubmit = async (e) => {
     e.preventDefault();
     
-    if (!eventForm.userId) {
+    if (!userId) {
       setError('User ID is required');
       return;
     }
-
+  
+    // Validate required fields
+    if (!eventForm.eventName || !eventForm.date || !eventForm.time || !eventForm.venueOrLink) {
+      setError('Event name, date, time, and venue/link are required');
+      return;
+    }
+  
     setIsLoading(true);
     setError('');
     setSuccessMessage('');
-
+  
     try {
       const endpoint = editingEventId 
-        ? `${API_BASE_URL}/api/events/${editingEventId}`
-        : `${API_BASE_URL}/api/events`;
+        ? `${API_BASE_URL}/api/events/${editingEventId}?userId=${userId}`
+        : `${API_BASE_URL}/api/events?userId=${userId}`;
       
       const method = editingEventId ? 'PUT' : 'POST';
-
+  
       const response = await fetch(endpoint, {
         method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(eventForm),
+        body: JSON.stringify({
+          eventName: eventForm.eventName,
+          date: eventForm.date,
+          time: eventForm.time,
+          venueOrLink: eventForm.venueOrLink,
+          details: eventForm.details || '' // Handle optional details
+        }),
       });
-
+  
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to save event');
+        throw new Error(errorData.error || 'Failed to save event');
       }
-
+  
       const result = await response.json();
       setSuccessMessage(result.message);
-
+  
+      // Reset form
       setEventForm({
         eventName: '',
         date: '',
@@ -316,6 +364,7 @@ const NotesSchedule = () => {
       setShowAddEvent(false);
       setEditingEventId(null);
       
+      // Refresh events list
       fetchEvents();
     } catch (error) {
       console.error('Error saving event:', error);
@@ -326,31 +375,20 @@ const NotesSchedule = () => {
   };
 
   return (
+    <>
+    <div className="app-container">
+    {/* Header */}
+    <header className="header">
+      <a href="#default" className="logo">RAAS</a>
+      <div className="header-actions">
+        <button className="header-btn" onClick={() => navigate(`/home`)}>
+          Home
+        </button>
+      </div>
+    </header>
     <div style={{ backgroundColor: '#e2f1e7', minHeight: '100vh' }}>
-      <nav className="navbar navbar-expand-lg navbar-dark" style={{ backgroundColor: '#243642' }}>
-        <div className="container">
-          <a className="navbar-brand" href="#">ReminderHub</a>
-          <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
-            <ul className="navbar-nav ms-auto">
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate('/home')}>Home</button>
-              </li>
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate('/Profile')}>Profile</button>
-              </li>
-              <li className="nav-item">
-                <button className="nav-link btn btn-link" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>
-                  Notifications
-                </button>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-
+      
+    <div style={{ height: '300px' }} aria-hidden="true"></div>
       <header className="hero py-5" style={{
         textAlign: 'center',
         padding: '100px 0',
@@ -688,10 +726,10 @@ const NotesSchedule = () => {
                           <tbody>
                             {events.map(event => (
                               <tr key={event.id}>
-                                <td>{event.eventName}</td>
+                                <td>{event.eventName || event.event_name}</td>
                                 <td>{event.date}</td>
                                 <td>{event.time}</td>
-                                <td>{event.venueOrLink}</td>
+                                <td>{event.venueOrLink || event.venue_or_link}</td>
                                 <td>{event.details}</td>
                                 <td>
                                   <button 
@@ -729,6 +767,8 @@ const NotesSchedule = () => {
         </div>
       </footer>
     </div>
+    </div>
+    </>
   );
 };
 

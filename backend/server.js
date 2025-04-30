@@ -5,18 +5,20 @@ const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const multer = require('multer');
+
 const path = require('path');
 const fs = require('fs');
+// Serve static files from uploads directory
 
 const app = express();
 const port = process.env.PORT || 9000;
-
 // Create uploads directory if it doesn't exist
 const uploadDir = 'uploads/profile_pictures';
+
+// Create directory if it doesn't exist
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 // CORS configuration
 app.use(
   cors({
@@ -336,6 +338,22 @@ app.post('/api/health', validateUserId, (req, res) => {
     res.json({ message: id ? 'Record updated successfully' : 'Record added successfully' });
   });
 });
+app.put('/api/health/:id', validateUserId, (req, res) => {
+  const { healthTips, steps, workout, waterIntake } = req.body;
+  const { userId } = req;
+  const { id } = req.params;
+
+  const query = `UPDATE health SET healthTips = ?, steps = ?, workout = ?, waterIntake = ? WHERE id = ? AND userId = ?`;
+  const params = [healthTips, steps, workout, waterIntake, id, userId];
+
+  db.query(query, params, (err) => {
+    if (err) {
+      console.error('Error updating record:', err);
+      return res.status(500).json({ message: 'Failed to update record' });
+    }
+    res.json({ message: 'Record updated successfully' });
+  });
+});
 
 app.get('/api/health', validateUserId, (req, res) => {
   const { userId } = req;
@@ -507,121 +525,70 @@ const isAdmin = (req, res, next) => {
   );
 };
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
+  destination: (req, file, cb) => {
+    cb(null, uploadDir); // Save to our upload directory
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${req.params.userId}-${uniqueSuffix}${path.extname(file.originalname)}`);
+  filename: (req, file, cb) => {
+    // Create a unique filename
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  fileFilter: function (req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
-  },
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
-});
-
-// Profile Routes
-app.get('/profile/:userId', (req, res) => {
-  const { userId } = req.params;
-  
-  db.query(
-    'SELECT name, email, age, phone_number, profile_picture FROM signup WHERE userId = ?',
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error fetching profile:', err);
-        return res.status(500).json({ error: 'Failed to fetch profile' });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      // Convert path to URL accessible path
-      const profileData = results[0];
-      if (profileData.profile_picture) {
-        profileData.profile_picture = `http://localhost:9000/${profileData.profile_picture.replace(/\\/g, '/')}`;
-      }
-      
-      res.json(profileData);
+  },
+  fileFilter: (req, file, cb) => {
+    // Only accept image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
     }
-  );
-});
-
-app.put('/profile/:userId', (req, res) => {
-  const { userId } = req.params;
-  const { name, email, age, phone_number } = req.body;
-  
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
   }
+});
+app.put('/profile/:userId/picture', upload.single('profile_picture'), async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-  db.query(
-    'UPDATE signup SET name = ?, email = ?, age = ?, phone_number = ? WHERE userId = ?',
-    [name, email, age, phone_number, userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error updating profile:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(400).json({ error: 'Email already exists' });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Get just the filename (without full path)
+    const filename = req.file.filename;
+
+    // Update database with just the filename
+    db.query(
+      'UPDATE signup SET profile_picture = ? WHERE userId = ?',
+      [filename, userId],
+      (err, result) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ error: 'Failed to update profile' });
         }
-        return res.status(500).json({ error: 'Failed to update profile' });
-      }
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      res.json({ message: 'Profile updated successfully' });
-    }
-  );
-});
 
-app.put('/profile/:userId/picture', upload.single('profile_picture'), (req, res) => {
-  const { userId } = req.params;
-  
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Return the URL to access the image
+        res.json({
+          message: 'Profile picture updated!',
+          imageUrl: `http://localhost:9000/uploads/profile_pictures/${filename}`
+        });
+      }
+    );
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'File upload failed' });
   }
-
-  const profilePicturePath = req.file.path.replace(/\\/g, '/');
-
-  db.query(
-    'UPDATE signup SET profile_picture = ? WHERE userId = ?',
-    [profilePicturePath, userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error updating profile picture:', err);
-        // Delete the uploaded file if DB update failed
-        fs.unlink(req.file.path, (unlinkErr) => {
-          if (unlinkErr) console.error('Error deleting uploaded file:', unlinkErr);
-        });
-        return res.status(500).json({ error: 'Failed to update profile picture' });
-      }
-      if (results.affectedRows === 0) {
-        // Delete the uploaded file if user not found
-        fs.unlink(req.file.path, (unlinkErr) => {
-          if (unlinkErr) console.error('Error deleting uploaded file:', unlinkErr);
-        });
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      res.json({ 
-        message: 'Profile picture updated successfully',
-        profile_picture: `http://localhost:9000/${profilePicturePath}`
-      });
-    }
-  );
 });
-
+app.use('/uploads', express.static('uploads'));
 // Notes Routes
 app.get('/api/notes', validateUserId, (req, res) => {
   const { userId } = req;
@@ -664,9 +631,9 @@ app.post('/api/notes', validateUserId, (req, res) => {
 });
 
 app.put('/api/notes/:id', validateUserId, (req, res) => {
-  const { userId } = req;
+  const { userId } = req;  // This should come from validateUserId middleware
   const { id } = req.params;
-  const { title, description } = req.body;
+  const { title, description } = req.body;  // Get these from body
   
   if (!title || !description) {
     return res.status(400).json({ error: 'Title and description are required' });
@@ -791,7 +758,7 @@ app.delete('/api/events/:id', validateUserId, (req, res) => {
         return res.status(500).json({ error: 'Failed to delete event' });
       }
       if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Event not found or not owned by user' });
+        return res.status(404).json({ error: 'event not found or not owned by user' });
       }
       res.json({ message: 'Event deleted successfully' });
     }
@@ -1022,6 +989,128 @@ app.delete('/api/grocery/:id', async (req, res) => {
     console.error('Error deleting grocery item:', error);
     res.status(500).json({ message: 'Failed to delete item' });
   }
+});
+
+// --books ==================================
+const quotes = [
+  {
+    quote: "The only way to do great work is to love what you do.",
+    author: "Steve Jobs"
+  },
+  {
+    quote: "Success is not final, failure is not fatal: It is the courage to continue that counts.",
+    author: "Winston Churchill"
+  },
+  {
+    quote: "Your time is limited, don't waste it living someone else's life.",
+    author: "Steve Jobs"
+  },
+  {
+    quote: "The future belongs to those who believe in the beauty of their dreams.",
+    author: "Eleanor Roosevelt"
+  },
+  {
+    quote: "Don't watch the clock; do what it does. Keep going.",
+    author: "Sam Levenson"
+  }
+];
+
+const booksDatabase = {
+  'self-help': [
+    {
+      title: "Atomic Habits",
+      author: "James Clear",
+      genre: "self-help",
+      reason: "Great for building good habits and breaking bad ones",
+      length: "medium"
+    },
+    {
+      title: "The 7 Habits of Highly Effective People",
+      author: "Stephen R. Covey",
+      genre: "self-help",
+      reason: "Timeless principles for personal and professional effectiveness",
+      length: "long"
+    }
+  ],
+  'business': [
+    {
+      title: "Good to Great",
+      author: "Jim Collins",
+      genre: "business",
+      reason: "Explains how companies transition from good to great",
+      length: "long"
+    },
+    {
+      title: "Lean Startup",
+      author: "Eric Ries",
+      genre: "business",
+      reason: "Great for entrepreneurs starting new ventures",
+      length: "medium"
+    }
+  ],
+  'biography': [
+    {
+      title: "Steve Jobs",
+      author: "Walter Isaacson",
+      genre: "biography",
+      reason: "Inspirational story of Apple's co-founder",
+      length: "long"
+    },
+    {
+      title: "Becoming",
+      author: "Michelle Obama",
+      genre: "biography",
+      reason: "Insightful memoir of the former First Lady",
+      length: "medium"
+    }
+  ],
+  'fiction': [
+    {
+      title: "The Alchemist",
+      author: "Paulo Coelho",
+      genre: "fiction",
+      reason: "Motivational story about pursuing your dreams",
+      length: "short"
+    },
+    {
+      title: "Man's Search for Meaning",
+      author: "Viktor E. Frankl",
+      genre: "fiction",
+      reason: "Powerful story about finding purpose in life",
+      length: "short"
+    }
+  ]
+};
+
+// Routes
+app.get('/api/quotes/random', (req, res) => {
+  const randomIndex = Math.floor(Math.random() * quotes.length);
+  res.json(quotes[randomIndex]);
+});
+
+app.post('/api/books/suggest', (req, res) => {
+  const { genre, mood, length } = req.body;
+  
+  // Filter books based on preferences
+  let suggestions = booksDatabase[genre] || [];
+  
+  // Further filtering based on mood (simplified for example)
+  if (mood === 'stressed') {
+    suggestions = suggestions.filter(book => book.genre === 'self-help' || book.genre === 'fiction');
+  } else if (mood === 'unfocused') {
+    suggestions = suggestions.filter(book => book.genre === 'self-help' || book.genre === 'business');
+  }
+  
+  // Filter by length
+  suggestions = suggestions.filter(book => book.length === length);
+  
+  // If no suggestions, return some defaults
+  if (suggestions.length === 0) {
+    suggestions = booksDatabase['self-help'].slice(0, 2);
+  }
+  
+  // Limit to 3 suggestions
+  res.json(suggestions.slice(0, 3));
 });
 
 app.listen(port, () => {

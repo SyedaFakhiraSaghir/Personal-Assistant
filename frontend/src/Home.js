@@ -20,8 +20,8 @@ const Home = () => {
   }, [userId, navigate]);
 
   return ( 
-    <div className={styles.appContainer}>
-      <header className={styles.header}>
+    <>
+    <header className={styles.header}>
         <a href="#default" className={styles.logo}>RAAS</a>
         <div className={styles.headerRight}>
           <button className={styles.btns} onClick={() => navigate(`/Profile`)}>
@@ -39,6 +39,8 @@ const Home = () => {
           <ChatBot></ChatBot>
         </div>
       </header>
+    <div className={styles.appContainer}>
+      
 
       <section className={styles.hero}>
         <h1>RAAS</h1>
@@ -91,6 +93,7 @@ const Home = () => {
         <FiMessageSquare size={24} />
       </div>
     </div>
+    </>
   );
 };
 

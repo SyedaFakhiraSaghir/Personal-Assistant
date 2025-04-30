@@ -1,0 +1,133 @@
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+  }
+  
+  .header .logo {
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+  
+  .header-right {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .btns {
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .btns:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Add margin-top to prevent header overlap with content */
+  body {
+    margin-top: 60px; /* Adjust based on header height */
+  }
+  
+  .health-tracker-wrapper {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9fff5; /* light background */
+  }
+  
+  .health-tracker-container {
+    text-align: center;
+  }
+  
+  .tracker-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: #2f4f4f;
+  }
+  
+  .button-wrapper {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tracker-btn {
+    background-color: #b5e7a0; /* pastel pista */
+    border: none;
+    padding: 1.5rem 3rem;
+    font-size: 1.25rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .tracker-btn:hover {
+    background-color: #a3d59b;
+    transform: scale(1.05);
+  }
+  
+  .tracker-btn:disabled {
+    background-color: #e0e0e0;
+    cursor: not-allowed;
+  }
+  
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .pretty-button-group {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .fancy-btn {
+    background: linear-gradient(to right, #6a11cb, #2575fc);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    font-size: 16px;
+    border-radius: 30px;
+    font-weight: bold;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .fancy-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  }
+  
+  .fancy-btn.cancel {
+    background: linear-gradient(to right, #ff4e50, #f9d423);
+    color: #fff;
+  }
+  
+  .fancy-btn.small {
+    padding: 6px 14px;
+    font-size: 14px;
+  }
+  
