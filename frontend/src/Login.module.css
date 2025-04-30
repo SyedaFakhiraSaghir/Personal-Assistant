@@ -1,183 +1,180 @@
-
-/* General Body Styling */
-body {
-  box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
-  background-image: url("explore_page.jpg"); /* Deep Purple-blue gradient */
-  height: 100vh;
+/* Background Wrapper */
+.wrapper {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(to right, rgba(0,0,0,0.7), rgba(0,0,0,0.3)),
+              url('https://images.unsplash.com/photo-1629196418950-7696e987baa6?auto=format&fit=crop&w=1650&q=80') no-repeat center center/cover;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  color: white;
+  justify-content: flex-start;
 }
-/* Header */
+
+/* Header Styling */
 .header {
-    width: 100%; /* Ensure the header spans the full width */
-    background-color: #85A98F; /* Soft green */
-    padding: 20px 10px;
-    display: flex;
-    justify-content: space-between; /* Align items within the header */
-    align-items: center; /* Center items vertically */
-    box-sizing: border-box; /* Include padding in width calculations */
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Style the header links */
-.header a {
-    color: #D3F1DF; /* Light green text */
-    text-align: center;
-    padding: 12px;
-    text-decoration: none;
-    font-size: 18px;
-    line-height: 25px;
-    border-radius: 4px;
-}
-
-/* Style the logo link */
-.header a.logo {
-    font-size: 25px;
-    font-weight: bold;
-}
-
-/* Style the active/current link */
-.header a.active {
-    background-color: #525B44; /* Dark green */
-    color: #D3F1DF; /* Light green text */
-}
-
-/* Float the link section to the right */
-.header-right {
-    display: flex;
-    gap: 15px; /* Add spacing between right-aligned links */
-}
-
-/* Notes App title */
-h1 {
-    color: #5A6C57; /* Darker green */
-    margin-bottom: 20px;
-    margin-top: 100px; /* Add space below the header */
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
-}
-
-.label{
-  color: white;
-  font-family: Arial, Helvetica, sans-serif;
-}
-
-/* Logo */
 .logo {
-  position: absolute;
-  top: 20px;
-  left: 20px;
+  color: white;
   font-size: 24px;
   font-weight: bold;
-  color: white;
+  text-decoration: none;
 }
 
-/* Explore Button */
-.btns {
-  position:sticky;
-  top: 20px;
-  right: 20px;
-  padding: 10px 20px;
-  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
-  color: white;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s ease;
-}
-
-.btns:hover {
-  background: #2575fc !important;
-}
-
-/* Background and Form Container */
-.background {
-  width: 100%;
+.headerRight {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  gap: 15px;
 }
 
-form {
-  background: linear-gradient(to bottom, #6a11cb, #2575fc) !important; /* Purple gradient */
+.exploreBtn {
+  background: linear-gradient(to right, #6a11cb, #2575fc);
+  padding: 10px 20px;
   border-radius: 15px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.2);
-  padding: 40px 30px;
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-  color: black;
-}
-
-/* Heading */
-form h2 {
-  margin-bottom: 20px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #fff;
-}
-
-/* Input Fields */
-input {
-  width: 100%;
-  padding: 10px;
-  margin: 10px 0;
-  border: 2px solid rgba(255, 255, 255, 0.5);
-  border-radius: 25px;
-  background: rgba(255, 255, 255, 0.2);
   color: white;
+  text-decoration: none;
+  font-weight: bold;
+  transition: 0.3s ease;
+}
+
+.exploreBtn:hover {
+  background: #2575fc;
+}
+
+/* Form Styling */
+.form {
+  background: rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  margin-top: 60px;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  width: 90%;
+  max-width: 400px;
+  color: #fff;
+  text-align: center;
+  animation: fadeInUp 1.2s ease;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+  0% {
+    transform: translateY(50px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.title {
+  font-size: 32px;
+  margin-bottom: 25px;
+  color: #fff;
+  text-shadow: 1px 1px 2px black;
+}
+
+/* Input Groups */
+.inputGroup {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px 40px;
+  border-radius: 25px;
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 2px solid rgba(255,255,255,0.3);
   font-size: 16px;
 }
 
-input:focus {
+.input:focus {
   outline: none;
   border-color: #6a11cb;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255,255,255,0.3);
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  color: white;
+}
+
+.toggle {
+  position: absolute;
+  top: 50%;
+  right: 15px;
+  transform: translateY(-50%);
+  color: white;
+  cursor: pointer;
+}
+
+/* Error Text */
+.error {
+  display: block;
+  margin-top: 5px;
+  font-size: 13px;
+  color: #ff6b6b;
 }
 
 /* Buttons */
-button {
+.loginBtn {
   width: 100%;
-  padding: 12px 15px;
+  padding: 12px;
   border: none;
   border-radius: 25px;
-  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
+  background: linear-gradient(to right, #6a11cb, #2575fc);
   color: white;
-  font-size: 16px;
-  font-style: normal;
-  cursor: pointer;
   font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-button:hover {
-  background: #2575fc !important;
-}
-
-/* Create Account Button */
-.btn-default {
-  margin-top: 10px;
-  padding: 10px 15px;
-  background: linear-gradient(to right, #6a11cb, #2575fc) !important; /* Purple-blue gradient */
-  color: white;
   font-size: 16px;
-  text-align: center;
+  transition: 0.3s ease;
+  margin-top: 10px;
+}
+
+.loginBtn:hover {
+  background: #2575fc;
+}
+
+.terms {
+  font-size: 13px;
+  margin-top: 10px;
+  color: #eee;
+}
+
+.createAccountBtn {
+  display: block;
+  margin-top: 15px;
+  padding: 10px;
+  background: linear-gradient(to right, #6a11cb, #2575fc);
   border-radius: 10px;
   text-decoration: none;
-  border: none;
-  display: block;
+  color: white;
+  font-weight: bold;
+  transition: 0.3s ease;
 }
 
-.btn-default:hover {
-  background: #2575fc !important;
+.createAccountBtn:hover {
+  background: #2575fc;
 }
 
-/* Responsive Design */
-@media (max-width: 600px) {
-  form {
-    padding: 20px;
-    width: 90%;
+/* Media Queries: Make it look good on small screens too */
+@media (max-width: 480px) {
+  .form {
+    padding: 30px 20px;
+    margin-top: 40px;
+  }
+
+  .title {
+    font-size: 24px;
   }
 }

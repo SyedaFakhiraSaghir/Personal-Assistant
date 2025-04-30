@@ -3,7 +3,7 @@ import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 import {FiUser, FiCompass, FiBell, FiLogOut, FiMessageSquare } from "react-icons/fi";
 import { FaRegSmile, FaMoneyBillWave, FaHeartbeat, FaBook, FaStickyNote, FaShoppingBasket } from "react-icons/fa";
-
+import ChatBot from "react-chatbotify";
 const Home = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
@@ -36,6 +36,7 @@ const Home = () => {
           <button className={styles.btns} onClick={handleLogout}>
             <FiLogOut /> Logout
           </button>
+          <ChatBot></ChatBot>
         </div>
       </header>
 
