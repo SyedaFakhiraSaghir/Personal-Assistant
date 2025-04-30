@@ -45,8 +45,8 @@ function Login() {
     <header className="header">
       <a href="#default" className="logo">RAAS</a>
       <div className="header-actions">
-        <button className="header-btn" onClick={() => navigate(`/`)}>
-          Home
+        <button className="header-btn" onClick={() => navigate(`explore`)}>
+          Explore
         </button>
       </div>
     </header>

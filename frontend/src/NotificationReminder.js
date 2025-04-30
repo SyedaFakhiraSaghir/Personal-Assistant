@@ -10,8 +10,6 @@ const NotificationReminder=() =>{
 return (
   
   <>
-  
-  
   <header className={styles.header}>
     <a href="#default" className={styles.logo}>RAAS</a>
     <div className={styles["header-right"]}>

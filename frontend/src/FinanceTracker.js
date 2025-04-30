@@ -146,8 +146,7 @@ function FinanceTracker() {
       <div className="header">
   <a href="#default" className="logo">RAAS</a>
   <div className="header-right">
-    <button className="btns" onClick={() => navigate(`/Profile`)}>Profile</button>
-    <button className="btns" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
+    <button className="btns" onClick={() => navigate(`/home`)}>Home</button>
   </div>
 </div>
       

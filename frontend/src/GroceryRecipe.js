@@ -499,7 +499,7 @@ const RecipeGroceryApp = () => {
     <header className="header">
       <a href="#default" className="logo">RAAS</a>
       <div className="header-actions">
-        <button className="header-btn" onClick={() => navigate(`/`)}>
+        <button className="header-btn" onClick={() => navigate(`/home`)}>
           Home
         </button>
       </div>
