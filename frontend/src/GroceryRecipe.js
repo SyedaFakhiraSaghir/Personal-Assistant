@@ -5,14 +5,28 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
+import { 
+  Calendar as CalendarIcon, 
+  ShoppingCart, 
+  BookOpen, 
+  List, 
+  Plus, 
+  RefreshCw, 
+  BarChart2,
+  Edit,
+  Trash2,
+  Save,
+  X,
+  Home,
+  Utensils
+} from 'lucide-react';
 import './GroceryRecipe.module.css';
-import {FiUser, FiCompass, FiBell, FiLogOut} from "react-icons/fi";
 
 Chart.register(...registerables);
 const localizer = momentLocalizer(moment);
 const API_BASE_URL = 'http://localhost:9000';
 
-const RecipeGroceryApp = () => {
+const RecipeGrocery = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
   
@@ -34,9 +48,7 @@ const RecipeGroceryApp = () => {
   
   // Calendar and analytics states
   const [events, setEvents] = useState([]);
-  const [showCalendar, setShowCalendar] = useState(false);
-  const [showAnalytics, setShowAnalytics] = useState(false);
-  const [selectedView, setSelectedView] = useState('list'); // 'list', 'calendar', 'analytics'
+  const [selectedView, setSelectedView] = useState('list');
   
   // Form data
   const [recipeForm, setRecipeForm] = useState({
@@ -62,15 +74,15 @@ const RecipeGroceryApp = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [activeTab, setActiveTab] = useState('recipes'); // 'recipes' or 'grocery'
+  const [activeTab, setActiveTab] = useState('recipes');
 
   // Load initial data
   useEffect(() => {
-    if (userIdFromUrl) {
+    if (userId) {
       handleShowRecipes();
       handleShowGroceryList();
     }
-  }, [userIdFromUrl]);
+  }, [userId]);
 
   // Common handlers
   const handleInputChange = (e, formType) => {
@@ -186,7 +198,7 @@ const RecipeGroceryApp = () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      handleShowRecipes(); // Refresh list
+      handleShowRecipes();
     } catch (error) {
       console.error('Error deleting recipe:', error);
       setError(error.message || 'Failed to delete recipe. Please try again.');
@@ -345,7 +357,7 @@ const RecipeGroceryApp = () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      handleShowGroceryList(); // Refresh list
+      handleShowGroceryList();
     } catch (error) {
       console.error('Error deleting grocery item:', error);
       setError(error.message || 'Failed to delete item. Please try again.');
@@ -377,7 +389,7 @@ const RecipeGroceryApp = () => {
 
       const result = await response.json();
       setSuccessMessage(result.message);
-      handleShowGroceryList(); // Refresh list
+      handleShowGroceryList();
     } catch (error) {
       console.error('Error toggling purchased status:', error);
       setError(error.message || 'Failed to update item. Please try again.');
@@ -463,8 +475,8 @@ const RecipeGroceryApp = () => {
         {
           label: 'Total Time (min)',
           data: recipes.map(recipe => recipe.prep_time + recipe.cook_time),
-          backgroundColor: 'rgba(54, 162, 235, 0.6)',
-          borderColor: 'rgba(54, 162, 235, 1)',
+          backgroundColor: 'rgba(110, 72, 170, 0.6)',
+          borderColor: 'rgba(110, 72, 170, 1)',
           borderWidth: 1,
         },
       ],
@@ -482,8 +494,8 @@ const RecipeGroceryApp = () => {
       datasets: [
         {
           data: [purchasedCount, notPurchasedCount],
-          backgroundColor: ['rgba(75, 192, 192, 0.6)', 'rgba(255, 99, 132, 0.6)'],
-          borderColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+          backgroundColor: ['rgba(16, 185, 129, 0.6)', 'rgba(239, 68, 68, 0.6)'],
+          borderColor: ['rgba(16, 185, 129, 1)', 'rgba(239, 68, 68, 1)'],
           borderWidth: 1,
         },
       ],
@@ -493,91 +505,118 @@ const RecipeGroceryApp = () => {
   };
 
   return (
-    <>
     <div className="app-container">
-    {/* Header */}
-    <header className="header">
-      <a href="#default" className="logo">RAAS</a>
-      <div className="header-actions">
-        <button className="header-btn" onClick={() => navigate(`/home`)}>
-          Home
-        </button>
-      </div>
-    </header>
-    <div className="modern-app-container">
-      <main className="app-main">
-        <div className="app-sidebar">
-          <div className="sidebar-section">
-            <h3 className="sidebar-title">Navigation</h3>
+      {/* Header */}
+      <header className="header">
+        <a href="#default" className="logo">RAAS</a>
+        <div className="header-actions">
+          <button className="header-btn" onClick={() => navigate(`/home`)}>
+            <Home size={16} className="mr-2" />
+            Home
+          </button>
+        </div>
+      </header>
+
+      <div style={{ height: '100px' }} aria-hidden="true"></div>
+
+      <div className="main-content">
+        {/* Sidebar */}
+
+      <div style={{ height: '700px' }} aria-hidden="true"></div>
+        <div className="sidebar">
+          <div className="mb-3">
             <button 
-              className={`sidebar-btn ${activeTab === 'recipes' ? 'active' : ''}`}
+              className={`btn ${activeTab === 'recipes' ? 'btn-primary' : 'btn-secondary'}`}
               onClick={() => setActiveTab('recipes')}
             >
-              <i className="fas fa-utensils"></i> Recipes
+              <Utensils size={16} className="mr-2" />
+              Recipes
             </button>
             <button 
-              className={`sidebar-btn ${activeTab === 'grocery' ? 'active' : ''}`}
+              className={`btn ${activeTab === 'grocery' ? 'btn-primary' : 'btn-secondary'} mt-2`}
               onClick={() => setActiveTab('grocery')}
             >
-              <i className="fas fa-shopping-cart"></i> Grocery List
+              <ShoppingCart size={16} className="mr-2" />
+              Grocery List
             </button>
           </div>
           
           {activeTab === 'recipes' && (
-            <div className="sidebar-section">
-              <h3 className="sidebar-title">Recipe Views</h3>
+            <div className="mb-3">
+              <h3 className="card-title">Recipe Views</h3>
               <button 
-                className={`sidebar-btn ${selectedView === 'list' ? 'active' : ''}`}
+                className={`btn ${selectedView === 'list' ? 'btn-primary' : 'btn-secondary'}`}
                 onClick={() => setSelectedView('list')}
               >
-                <i className="fas fa-list"></i> List View
+                <List size={16} className="mr-2" />
+                List View
               </button>
               <button 
-                className={`sidebar-btn ${selectedView === 'calendar' ? 'active' : ''}`}
+                className={`btn ${selectedView === 'calendar' ? 'btn-primary' : 'btn-secondary'} mt-2`}
                 onClick={() => setSelectedView('calendar')}
               >
-                <i className="fas fa-calendar"></i> Calendar
+                <CalendarIcon size={16} className="mr-2" />
+                Calendar
               </button>
               <button 
-                className={`sidebar-btn ${selectedView === 'analytics' ? 'active' : ''}`}
+                className={`btn ${selectedView === 'analytics' ? 'btn-primary' : 'btn-secondary'} mt-2`}
                 onClick={() => setSelectedView('analytics')}
               >
-                <i className="fas fa-chart-bar"></i> Analytics
+                <BarChart2 size={16} className="mr-2" />
+                Analytics
               </button>
             </div>
           )}
         </div>
 
-        <div className="app-content">
-          {error && <div className="alert alert-error">{error}</div>}
-          {successMessage && <div className="alert alert-success">{successMessage}</div>}
+        {/* Main Content Area */}
+        <div className="content-area">
+          {error && (
+            <div className="card mb-3" style={{ backgroundColor: '#fee2e2', borderColor: '#fca5a5' }}>
+              <div className="card-body text-red-600">
+                {error}
+              </div>
+            </div>
+          )}
+          
+          {successMessage && (
+            <div className="card mb-3" style={{ backgroundColor: '#dcfce7', borderColor: '#86efac' }}>
+              <div className="card-body text-green-600">
+                {successMessage}
+              </div>
+            </div>
+          )}
 
           {/* Recipes Tab */}
           {activeTab === 'recipes' && (
             <div className="recipes-section">
-              <div className="section-header">
-                <h2 className="section-title">Recipe Management</h2>
-                <div className="action-buttons">
-                  <button 
-                    className="btn-primary"
-                    onClick={handleAddRecipeClick}
-                    disabled={isLoading}
-                  >
-                    <i className="fas fa-plus"></i> {isLoading ? 'Processing...' : 'Add Recipe'}
-                  </button>
-                  <button 
-                    className="btn-secondary"
-                    onClick={handleShowRecipes}
-                    disabled={isLoading || !userIdFromUrl}
-                  >
-                    <i className="fas fa-sync"></i> {isLoading ? 'Loading...' : 'Refresh'}
-                  </button>
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h2 className="card-title">Recipe Management</h2>
+                  <div className="flex gap-2">
+                    <button 
+                      className="btn-primary"
+                      onClick={handleAddRecipeClick}
+                      disabled={isLoading}
+                    >
+                      <Plus size={16} className="mr-2" />
+                      {isLoading ? 'Processing...' : 'Add Recipe'}
+                    </button>
+                    <button 
+                      className="btn-secondary"
+                      onClick={handleShowRecipes}
+                      disabled={isLoading || !userIdFromUrl}
+                    >
+                      <RefreshCw size={16} className="mr-2" />
+                      {isLoading ? 'Loading...' : 'Refresh'}
+                    </button>
+                  </div>
                 </div>
               </div>
 
               {/* Add Recipe Form */}
               {showAddRecipe && (
-                <div className="card form-card">
+                <div className="card form-card mb-3">
                   <div className="card-header">
                     <h3>{editingRecipeId ? 'Edit Recipe' : 'Add New Recipe'}</h3>
                   </div>
@@ -585,7 +624,7 @@ const RecipeGroceryApp = () => {
                     <form onSubmit={handleRecipeSubmit}>
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="title">Title</label>
+                          <label htmlFor="title" className="form-label">Title</label>
                           <input 
                             type="text" 
                             id="title" 
@@ -598,7 +637,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="meal_date">Meal Date</label>
+                          <label htmlFor="meal_date" className="form-label">Meal Date</label>
                           <input 
                             type="datetime-local" 
                             id="meal_date" 
@@ -612,7 +651,7 @@ const RecipeGroceryApp = () => {
                       </div>
                       
                       <div className="form-group">
-                        <label htmlFor="description">Description</label>
+                        <label htmlFor="description" className="form-label">Description</label>
                         <textarea
                           id="description" 
                           name="description" 
@@ -626,7 +665,7 @@ const RecipeGroceryApp = () => {
                       
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="prep_time">Prep Time (minutes)</label>
+                          <label htmlFor="prep_time" className="form-label">Prep Time (minutes)</label>
                           <input 
                             type="number" 
                             id="prep_time" 
@@ -639,7 +678,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="cook_time">Cook Time (minutes)</label>
+                          <label htmlFor="cook_time" className="form-label">Cook Time (minutes)</label>
                           <input 
                             type="number" 
                             id="cook_time" 
@@ -652,7 +691,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="servings">Servings</label>
+                          <label htmlFor="servings" className="form-label">Servings</label>
                           <input 
                             type="number" 
                             id="servings" 
@@ -672,7 +711,8 @@ const RecipeGroceryApp = () => {
                           className="btn-primary"
                           disabled={isLoading || !userIdFromUrl}
                         >
-                          <i className="fas fa-save"></i> {isLoading ? 'Saving...' : 'Save Recipe'}
+                          <Save size={16} className="mr-2" />
+                          {isLoading ? 'Saving...' : 'Save Recipe'}
                         </button>
                         <button 
                           type="button" 
@@ -680,7 +720,8 @@ const RecipeGroceryApp = () => {
                           onClick={() => setShowAddRecipe(false)}
                           disabled={isLoading}
                         >
-                          <i className="fas fa-times"></i> Cancel
+                          <X size={16} className="mr-2" />
+                          Cancel
                         </button>
                       </div>
                     </form>
@@ -690,7 +731,7 @@ const RecipeGroceryApp = () => {
 
               {/* Recipes Content Area */}
               {showRecipes && (
-                <div className="content-area">
+                <>
                   {selectedView === 'list' && (
                     <div className="card">
                       <div className="card-header">
@@ -698,12 +739,13 @@ const RecipeGroceryApp = () => {
                       </div>
                       <div className="card-body">
                         {isLoading ? (
-                          <div className="loading-spinner">
-                            <i className="fas fa-spinner fa-spin"></i> Loading recipes...
+                          <div className="text-center py-4">
+                            <RefreshCw size={24} className="animate-spin mx-auto" />
+                            <p className="mt-2">Loading recipes...</p>
                           </div>
                         ) : recipes.length > 0 ? (
-                          <div className="responsive-table">
-                            <table className="data-table">
+                          <div className="overflow-x-auto">
+                            <table className="table">
                               <thead>
                                 <tr>
                                   <th>Title</th>
@@ -729,15 +771,15 @@ const RecipeGroceryApp = () => {
                                         disabled={isLoading}
                                         title="Edit"
                                       >
-                                        <i className="fas fa-edit"></i>
+                                        <Edit size={16} />
                                       </button>
                                       <button 
-                                        className="btn-icon danger"
+                                        className="btn-icon danger ml-2"
                                         onClick={() => deleteRecipe(recipe.id)}
                                         disabled={isLoading}
                                         title="Delete"
                                       >
-                                        <i className="fas fa-trash"></i>
+                                        <Trash2 size={16} />
                                       </button>
                                     </td>
                                   </tr>
@@ -746,9 +788,9 @@ const RecipeGroceryApp = () => {
                             </table>
                           </div>
                         ) : (
-                          <div className="empty-state">
-                            <i className="fas fa-utensils"></i>
-                            <p>No recipes found. Add your first recipe!</p>
+                          <div className="text-center py-8">
+                            <BookOpen size={48} className="mx-auto text-gray-400" />
+                            <p className="mt-4 text-gray-500">No recipes found. Add your first recipe!</p>
                           </div>
                         )}
                       </div>
@@ -767,7 +809,7 @@ const RecipeGroceryApp = () => {
                             events={events}
                             startAccessor="start"
                             endAccessor="end"
-                            style={{ height: 600 }}
+                            style={{ height: '100%' }}
                             onSelectEvent={event => {
                               const recipe = recipes.find(r => r.id === event.id);
                               if (recipe) editRecipe(recipe);
@@ -785,9 +827,9 @@ const RecipeGroceryApp = () => {
                       </div>
                       <div className="card-body">
                         {recipes.length > 0 ? (
-                          <div className="analytics-grid">
+                          <>
                             <div className="chart-container">
-                              <h4>Recipe Time Comparison</h4>
+                              <h4 className="chart-title">Recipe Time Comparison</h4>
                               <Bar 
                                 data={getRecipeAnalytics()} 
                                 options={{
@@ -802,69 +844,77 @@ const RecipeGroceryApp = () => {
                             </div>
                             <div className="stats-container">
                               <div className="stat-card">
-                                <h5>Total Recipes</h5>
+                                <h5 className="stat-title">Total Recipes</h5>
                                 <p className="stat-value">{recipes.length}</p>
                               </div>
                               <div className="stat-card">
-                                <h5>Average Prep Time</h5>
+                                <h5 className="stat-title">Average Prep Time</h5>
                                 <p className="stat-value">
                                   {Math.round(recipes.reduce((sum, recipe) => sum + recipe.prep_time, 0) / recipes.length)} mins
                                 </p>
                               </div>
                               <div className="stat-card">
-                                <h5>Average Cook Time</h5>
+                                <h5 className="stat-title">Average Cook Time</h5>
                                 <p className="stat-value">
                                   {Math.round(recipes.reduce((sum, recipe) => sum + recipe.cook_time, 0) / recipes.length)} mins
                                 </p>
                               </div>
                               <div className="stat-card">
-                                <h5>Planned Meals</h5>
+                                <h5 className="stat-title">Planned Meals</h5>
                                 <p className="stat-value">
                                   {recipes.filter(r => r.meal_date).length}
                                 </p>
                               </div>
                             </div>
-                          </div>
+                          </>
                         ) : (
-                          <div className="empty-state">
-                            <i className="fas fa-chart-bar"></i>
-                            <p>No recipe data available for analytics</p>
+                          <div className="text-center py-8">
+                            <BarChart2 size={48} className="mx-auto text-gray-400" />
+                            <p className="mt-4 text-gray-500">No recipe data available for analytics</p>
                           </div>
                         )}
                       </div>
                     </div>
                   )}
-                </div>
+                </>
               )}
             </div>
           )}
 
           {/* Grocery Tab */}
           {activeTab === 'grocery' && (
+            
             <div className="grocery-section">
-              <div className="section-header">
-                <h2 className="section-title">Grocery Management</h2>
-                <div className="action-buttons">
-                  <button 
-                    className="btn-primary"
-                    onClick={handleAddGroceryClick}
-                    disabled={isLoading}
-                  >
-                    <i className="fas fa-plus"></i> {isLoading ? 'Processing...' : 'Add Item'}
-                  </button>
-                  <button 
-                    className="btn-secondary"
-                    onClick={handleShowGroceryList}
-                    disabled={isLoading || !userIdFromUrl}
-                  >
-                    <i className="fas fa-sync"></i> {isLoading ? 'Loading...' : 'Refresh'}
-                  </button>
+              
+              <div className="card mb-3">
+                <div className="card-header">
+                  <h2 className="card-title">Grocery Management</h2>
+                  <div className="flex gap-2">
+                    <button 
+                      className="btn-primary"
+                      onClick={handleAddGroceryClick}
+                      disabled={isLoading}
+                    >
+                      <Plus size={16} className="mr-2" />
+                      {isLoading ? 'Processing...' : 'Add Item'}
+                    </button>
+                    <button 
+                      className="btn-secondary"
+                      onClick={handleShowGroceryList}
+                      disabled={isLoading || !userIdFromUrl}
+                    >
+                      <RefreshCw size={16} className="mr-2" />
+                      {isLoading ? 'Loading...' : 'Refresh'}
+                    </button>
+                  </div>
                 </div>
               </div>
+              
+              
 
               {/* Add Grocery Form */}
               {showAddGrocery && (
-                <div className="card form-card">
+                <div className="card form-card mb-3">
                   <div className="card-header">
                     <h3>{editingGroceryId ? 'Edit Item' : 'Add New Item'}</h3>
                   </div>
@@ -872,7 +922,7 @@ const RecipeGroceryApp = () => {
                     <form onSubmit={handleGrocerySubmit}>
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="name">Item Name</label>
+                          <label htmlFor="name" className="form-label">Item Name</label>
                           <input 
                             type="text" 
                             id="name" 
@@ -885,7 +935,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="recipe_id">Recipe ID (optional)</label>
+                          <label htmlFor="recipe_id" className="form-label">Recipe ID (optional)</label>
                           <input 
                             type="number" 
                             id="recipe_id" 
@@ -901,7 +951,7 @@ const RecipeGroceryApp = () => {
                       
                       <div className="form-row">
                         <div className="form-group">
-                          <label htmlFor="quantity">Quantity</label>
+                          <label htmlFor="quantity" className="form-label">Quantity</label>
                           <input 
                             type="text" 
                             id="quantity" 
@@ -913,7 +963,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="unit">Unit</label>
+                          <label htmlFor="unit" className="form-label">Unit</label>
                           <input 
                             type="text" 
                             id="unit" 
@@ -925,7 +975,7 @@ const RecipeGroceryApp = () => {
                           />
                         </div>
                         <div className="form-group">
-                          <label htmlFor="brand">Brand</label>
+                          <label htmlFor="brand" className="form-label">Brand</label>
                           <input 
                             type="text" 
                             id="brand" 
@@ -957,7 +1007,8 @@ const RecipeGroceryApp = () => {
                           className="btn-primary"
                           disabled={isLoading || !userIdFromUrl}
                         >
-                          <i className="fas fa-save"></i> {isLoading ? 'Saving...' : 'Save Item'}
+                          <Save size={16} className="mr-2" />
+                          {isLoading ? 'Saving...' : 'Save Item'}
                         </button>
                         <button 
                           type="button" 
@@ -965,152 +1016,153 @@ const RecipeGroceryApp = () => {
                           onClick={() => setShowAddGrocery(false)}
                           disabled={isLoading}
                         >
-                          <i className="fas fa-times"></i> Cancel
+                          <X size={16} className="mr-2" />
+                          Cancel
                         </button>
                       </div>
                     </form>
                   </div>
                 </div>
               )}
-
               {/* Grocery List */}
               {showGroceryList && (
-                <div className="content-area">
-                  <div className="card">
-                    <div className="card-header">
-                      <h3>Your Grocery List</h3>
-                    </div>
-                    <div className="card-body">
-                      {isLoading ? (
-                        <div className="loading-spinner">
-                          <i className="fas fa-spinner fa-spin"></i> Loading grocery items...
-                        </div>
-                      ) : groceryItems.length > 0 ? (
-                        <>
-                          <div className="responsive-table">
-                            <table className="data-table">
-                              <thead>
-                                <tr>
-                                  <th>Item</th>
-                                  <th>Quantity</th>
-                                  <th>Brand</th>
-                                  <th>Recipe</th>
-                                  <th>Status</th>
-                                  <th>Actions</th>
+                <div className="card">
+                  <div className="card-header">
+                    <h3>Your Grocery List</h3>
+                  </div>
+                  <div className="card-body">
+                    {isLoading ? (
+                      <div className="text-center py-4">
+                        <RefreshCw size={24} className="animate-spin mx-auto" />
+                        <p className="mt-2">Loading grocery items...</p>
+                      </div>
+                    ) : groceryItems.length > 0 ? (
+                      <>
+                        <div className="overflow-x-auto">
+                          <table className="table">
+                            <thead>
+                              <tr>
+                                <th>Item</th>
+                                <th>Quantity</th>
+                                <th>Brand</th>
+                                <th>Recipe</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {groceryItems.map(item => (
+                                <tr key={item.id} className={item.purchased ? 'purchased' : ''}>
+                                  <td>{item.name}</td>
+                                  <td>{item.quantity} {item.unit}</td>
+                                  <td>{item.brand || '-'}</td>
+                                  <td>
+                                    {item.recipe_id ? (
+                                      recipes.find(r => r.id === item.recipe_id)?.title || `Recipe #${item.recipe_id}`
+                                    ) : '-'}
+                                  </td>
+                                  <td>
+                                    <div className="status-toggle">
+                                      <label className="switch">
+                                        <input
+                                          type="checkbox"
+                                          checked={item.purchased}
+                                          onChange={() => togglePurchased(item.id, item.purchased)}
+                                          disabled={isLoading}
+                                        />
+                                        <span className="slider round"></span>
+                                      </label>
+                                      <span className="status-text">
+                                        {item.purchased ? 'Purchased' : 'Needed'}
+                                      </span>
+                                    </div>
+                                  </td>
+                                  <td className="actions">
+                                    <button 
+                                      className="btn-icon"
+                                      onClick={() => editGroceryItem(item)}
+                                      disabled={isLoading}
+                                      title="Edit"
+                                    >
+                                      <Edit size={16} />
+                                    </button>
+                                    <button 
+                                      className="btn-icon danger ml-2"
+                                      onClick={() => deleteGroceryItem(item.id)}
+                                      disabled={isLoading}
+                                      title="Delete"
+                                    >
+                                      <Trash2 size={16} />
+                                    </button>
+                                  </td>
                                 </tr>
-                              </thead>
-                              <tbody>
-                                {groceryItems.map(item => (
-                                  <tr key={item.id} className={item.purchased ? 'purchased' : ''}>
-                                    <td>{item.name}</td>
-                                    <td>{item.quantity} {item.unit}</td>
-                                    <td>{item.brand || '-'}</td>
-                                    <td>
-                                      {item.recipe_id ? (
-                                        recipes.find(r => r.id === item.recipe_id)?.title || `Recipe #${item.recipe_id}`
-                                      ) : '-'}
-                                    </td>
-                                    <td>
-                                      <div className="status-toggle">
-                                        <label className="switch">
-                                          <input
-                                            type="checkbox"
-                                            checked={item.purchased}
-                                            onChange={() => togglePurchased(item.id, item.purchased)}
-                                            disabled={isLoading}
-                                          />
-                                          <span className="slider round"></span>
-                                        </label>
-                                        <span className="status-text">
-                                          {item.purchased ? 'Purchased' : 'Needed'}
-                                        </span>
-                                      </div>
-                                    </td>
-                                    <td className="actions">
-                                      <button 
-                                        className="btn-icon"
-                                        onClick={() => editGroceryItem(item)}
-                                        disabled={isLoading}
-                                        title="Edit"
-                                      >
-                                        <i className="fas fa-edit"></i>
-                                      </button>
-                                      <button 
-                                        className="btn-icon danger"
-                                        onClick={() => deleteGroceryItem(item.id)}
-                                        disabled={isLoading}
-                                        title="Delete"
-                                      >
-                                        <i className="fas fa-trash"></i>
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
-                              </tbody>
-                            </table>
-                          </div>
-                          
-                          <div className="analytics-section">
-                            <h4>Grocery List Analytics</h4>
-                            <div className="analytics-grid">
-                              <div className="chart-container small">
-                                <Pie 
-                                  data={getGroceryAnalytics()} 
-                                  options={{
-                                    responsive: true,
-                                    plugins: {
-                                      legend: {
-                                        position: 'bottom',
-                                      },
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        
+                        <div className="mt-6">
+                          <h4 className="chart-title">Grocery List Analytics</h4>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                            <div className="chart-container">
+                              <Pie 
+                                data={getGroceryAnalytics()} 
+                                options={{
+                                  responsive: true,
+                                  plugins: {
+                                    legend: {
+                                      position: 'bottom',
                                     },
-                                  }}
-                                />
+                                  },
+                                }}
+                              />
+                            </div>
+                            <div className="stats-container">
+                              <div className="stat-card">
+                                <h5 className="stat-title">Total Items</h5>
+                                <p className="stat-value">{groceryItems.length}</p>
                               </div>
-                              <div className="stats-container">
-                                <div className="stat-card">
-                                  <h5>Total Items</h5>
-                                  <p className="stat-value">{groceryItems.length}</p>
-                                </div>
-                                <div className="stat-card">
-                                  <h5>Purchased</h5>
-                                  <p className="stat-value">
-                                    {groceryItems.filter(item => item.purchased).length}
-                                  </p>
-                                </div>
-                                <div className="stat-card">
-                                  <h5>Remaining</h5>
-                                  <p className="stat-value">
-                                    {groceryItems.filter(item => !item.purchased).length}
-                                  </p>
-                                </div>
-                                <div className="stat-card">
-                                  <h5>% Complete</h5>
-                                  <p className="stat-value">
-                                    {Math.round((groceryItems.filter(item => item.purchased).length / groceryItems.length * 100))}%
-                                  </p>
-                                </div>
+                              <div className="stat-card">
+                                <h5 className="stat-title">Purchased</h5>
+                                <p className="stat-value">
+                                  {groceryItems.filter(item => item.purchased).length}
+                                </p>
+                              </div>
+                              <div className="stat-card">
+                                <h5 className="stat-title">Remaining</h5>
+                                <p className="stat-value">
+                                  {groceryItems.filter(item => !item.purchased).length}
+                                </p>
+                              </div>
+                              <div className="stat-card">
+                                <h5 className="stat-title">% Complete</h5>
+                                <p className="stat-value">
+                                  {Math.round((groceryItems.filter(item => item.purchased).length / groceryItems.length * 100))}%
+                                </p>
                               </div>
                             </div>
                           </div>
-                        </>
-                      ) : (
-                        <div className="empty-state">
-                          <i className="fas fa-shopping-cart"></i>
-                          <p>No grocery items found. Add your first item!</p>
                         </div>
-                      )}
-                    </div>
+                      </>
+                    ) : (
+                      <div className="text-center py-8">
+                        <ShoppingCart size={48} className="mx-auto text-gray-400" />
+                        <p className="mt-4 text-gray-500">No grocery items found. Add your first item!</p>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
             </div>
           )}
+
+          <div className="text-center text-muted mt-6">
+            © {new Date().getFullYear()} RAAS. All rights reserved.
+          </div>
         </div>
-      </main>
+      </div>
     </div>
-    </div>
-    </>
   );
 };
 
-export default RecipeGroceryApp;
+export default RecipeGrocery;

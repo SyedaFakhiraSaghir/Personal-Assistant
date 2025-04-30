@@ -23,7 +23,7 @@ const Explore = () => {
           </button>
         </div>
       </header>
-
+      <div style={{ height: '350px' }} aria-hidden="true"></div>
       {/* Features Section */}
       <main>
         <section className="features-section">

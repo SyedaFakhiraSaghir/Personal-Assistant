@@ -388,7 +388,7 @@ const NotesSchedule = () => {
     </header>
     <div style={{ backgroundColor: '#e2f1e7', minHeight: '100vh' }}>
       
-
+    <div style={{ height: '300px' }} aria-hidden="true"></div>
       <header className="hero py-5" style={{
         textAlign: 'center',
         padding: '100px 0',

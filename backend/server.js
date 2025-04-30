@@ -5,18 +5,20 @@ const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const multer = require('multer');
+
 const path = require('path');
 const fs = require('fs');
+// Serve static files from uploads directory
 
 const app = express();
 const port = process.env.PORT || 9000;
-
 // Create uploads directory if it doesn't exist
 const uploadDir = 'uploads/profile_pictures';
+
+// Create directory if it doesn't exist
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
-
 // CORS configuration
 app.use(
   cors({
@@ -523,121 +525,70 @@ const isAdmin = (req, res, next) => {
   );
 };
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, uploadDir);
+  destination: (req, file, cb) => {
+    cb(null, uploadDir); // Save to our upload directory
   },
-  filename: function (req, file, cb) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, `${req.params.userId}-${uniqueSuffix}${path.extname(file.originalname)}`);
+  filename: (req, file, cb) => {
+    // Create a unique filename
+    const uniqueName = `${Date.now()}-${Math.round(Math.random() * 1E9)}${path.extname(file.originalname)}`;
+    cb(null, uniqueName);
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
-  fileFilter: function (req, file, cb) {
-    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
-      return cb(new Error('Only image files are allowed!'), false);
-    }
-    cb(null, true);
-  },
   limits: {
     fileSize: 5 * 1024 * 1024 // 5MB limit
-  }
-});
-
-// Profile Routes
-app.get('/profile/:userId', (req, res) => {
-  const { userId } = req.params;
-  
-  db.query(
-    'SELECT name, email, age, phone_number, profile_picture FROM signup WHERE userId = ?',
-    [userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error fetching profile:', err);
-        return res.status(500).json({ error: 'Failed to fetch profile' });
-      }
-      if (results.length === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      // Convert path to URL accessible path
-      const profileData = results[0];
-      if (profileData.profile_picture) {
-        profileData.profile_picture = `http://localhost:9000/${profileData.profile_picture.replace(/\\/g, '/')}`;
-      }
-      
-      res.json(profileData);
+  },
+  fileFilter: (req, file, cb) => {
+    // Only accept image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'), false);
     }
-  );
-});
-
-app.put('/profile/:userId', (req, res) => {
-  const { userId } = req.params;
-  const { name, email, age, phone_number } = req.body;
-  
-  if (!name || !email) {
-    return res.status(400).json({ error: 'Name and email are required' });
   }
+});
+app.put('/profile/:userId/picture', upload.single('profile_picture'), async (req, res) => {
+  try {
+    const { userId } = req.params;
 
-  db.query(
-    'UPDATE signup SET name = ?, email = ?, age = ?, phone_number = ? WHERE userId = ?',
-    [name, email, age, phone_number, userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error updating profile:', err);
-        if (err.code === 'ER_DUP_ENTRY') {
-          return res.status(400).json({ error: 'Email already exists' });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Get just the filename (without full path)
+    const filename = req.file.filename;
+
+    // Update database with just the filename
+    db.query(
+      'UPDATE signup SET profile_picture = ? WHERE userId = ?',
+      [filename, userId],
+      (err, result) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ error: 'Failed to update profile' });
         }
-        return res.status(500).json({ error: 'Failed to update profile' });
-      }
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ error: 'User not found' });
-      }
-      res.json({ message: 'Profile updated successfully' });
-    }
-  );
-});
 
-app.put('/profile/:userId/picture', upload.single('profile_picture'), (req, res) => {
-  const { userId } = req.params;
-  
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Return the URL to access the image
+        res.json({
+          message: 'Profile picture updated!',
+          imageUrl: `http://localhost:9000/uploads/profile_pictures/${filename}`
+        });
+      }
+    );
+
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'File upload failed' });
   }
-
-  const profilePicturePath = req.file.path.replace(/\\/g, '/');
-
-  db.query(
-    'UPDATE signup SET profile_picture = ? WHERE userId = ?',
-    [profilePicturePath, userId],
-    (err, results) => {
-      if (err) {
-        console.error('Error updating profile picture:', err);
-        // Delete the uploaded file if DB update failed
-        fs.unlink(req.file.path, (unlinkErr) => {
-          if (unlinkErr) console.error('Error deleting uploaded file:', unlinkErr);
-        });
-        return res.status(500).json({ error: 'Failed to update profile picture' });
-      }
-      if (results.affectedRows === 0) {
-        // Delete the uploaded file if user not found
-        fs.unlink(req.file.path, (unlinkErr) => {
-          if (unlinkErr) console.error('Error deleting uploaded file:', unlinkErr);
-        });
-        return res.status(404).json({ error: 'User not found' });
-      }
-      
-      res.json({ 
-        message: 'Profile picture updated successfully',
-        profile_picture: `http://localhost:9000/${profilePicturePath}`
-      });
-    }
-  );
 });
-
+app.use('/uploads', express.static('uploads'));
 // Notes Routes
 app.get('/api/notes', validateUserId, (req, res) => {
   const { userId } = req;

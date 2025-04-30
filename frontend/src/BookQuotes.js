@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-const MotivationalApp = () => {
+import './BookQuotes.module.css'
+
+const BookQuotes = () => {
   const navigate=useNavigate();
   const [quote, setQuote] = useState('');
   const [author, setAuthor] = useState('');
@@ -149,95 +151,10 @@ const MotivationalApp = () => {
       
       {error && <div className="error">{error}</div>}
       
-      <style jsx>{`
-        .container {
-          max-width: 800px;
-          margin: 0 auto;
-          padding: 20px;
-          font-family: Arial, sans-serif;
-        }
-        
-        h1 {
-          text-align: center;
-          color: #2c3e50;
-        }
-        
-        .quote-section, .preferences-section, .books-section {
-          margin-bottom: 30px;
-          padding: 20px;
-          background-color: #f9f9f9;
-          border-radius: 8px;
-        }
-        
-        blockquote {
-          font-style: italic;
-          font-size: 1.2em;
-          border-left: 4px solid #3498db;
-          padding-left: 15px;
-          margin: 20px 0;
-        }
-        
-        footer {
-          font-weight: bold;
-          margin-top: 10px;
-        }
-        
-        .preference-group {
-          margin-bottom: 15px;
-        }
-        
-        label {
-          display: block;
-          margin-bottom: 5px;
-          font-weight: bold;
-        }
-        
-        select {
-          width: 100%;
-          padding: 8px;
-          border-radius: 4px;
-          border: 1px solid #ddd;
-        }
-        
-        button {
-          background-color: #3498db;
-          color: white;
-          border: none;
-          padding: 10px 15px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 1em;
-          margin-top: 10px;
-        }
-        
-        button:hover {
-          background-color: #2980b9;
-        }
-        
-        .book-list {
-          list-style: none;
-          padding: 0;
-        }
-        
-        .book-item {
-          background-color: white;
-          padding: 15px;
-          margin-bottom: 15px;
-          border-radius: 4px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .error {
-          color: #e74c3c;
-          padding: 10px;
-          background-color: #fadbd8;
-          border-radius: 4px;
-          margin: 20px 0;
-        }
-      `}</style>
+      
     </div>
     </>
   );
 };
 
-export default MotivationalApp;
+export default BookQuotes;

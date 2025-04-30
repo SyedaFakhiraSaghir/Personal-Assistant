@@ -149,6 +149,7 @@ function FinanceTracker() {
     <button className="btns" onClick={() => navigate(`/home`)}>Home</button>
   </div>
 </div>
+<div style={{ height: '700px' }} aria-hidden="true"></div>
       
       <div className={styles.container}>
         {error && <div className={styles.error}>{error}</div>}
