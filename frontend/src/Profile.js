@@ -146,19 +146,11 @@ const Profile = () => {
   return (
     <>
       <header className={styles.header}>
-        <a href="#default" className={styles.logo}>RAAS</a>
-        <div className={styles.headerRight}>
-          <button className={styles.btns} onClick={() => navigate(`/home`)}>
-            Home
-          </button>
-          <button className={styles.btns} onClick={() => navigate(`/`)}>
-            Login
-          </button>
-          <button className={styles.btns} onClick={() => navigate(`/signup`)}>
-            Signup
-          </button>
-        </div>
-      </header>
+    <a href="#default" className={styles.logo}>RAAS</a>
+    <div className={styles["header-right"]}>
+      <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
+    </div>
+  </header>
 
       <div className={styles["profile-page"]}>
         <div className={styles["profile-container"]}>

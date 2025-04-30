@@ -40,13 +40,17 @@ function Login() {
 
   return (
     <>
-    <header>
-        <a href="#default" className="logo">RAAS</a>
-        <div className="header-right">
-          <a className="btns" href="/explore">Explore</a>
-       
+    <div className="app-container">
+    {/* Header */}
+    <header className="header">
+      <a href="#default" className="logo">RAAS</a>
+      <div className="header-actions">
+        <button className="header-btn" onClick={() => navigate(`/`)}>
+          Home
+        </button>
       </div>
-      </header>
+    </header>
+    </div>
       <p></p>
     <section>
         <form onSubmit={handleSubmit}>

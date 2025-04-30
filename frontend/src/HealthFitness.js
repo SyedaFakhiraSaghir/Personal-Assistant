@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation , useNavigate} from 'react-router-dom';
-import './HealthFitness.css'; // Import the CSS file
+import './HealthFitness.css'; 
 const API_BASE_URL = 'http://localhost:9000';
 
 const HealthTracker = () => {
@@ -8,8 +8,7 @@ const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
 
   console.log("User ID from localStorage:", userId);
-
-    const location = useLocation(); // 👈 get current location
+    const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const userIdFromUrl = searchParams.get('userId') || '';
     const [showAddRecord, setShowAddRecord] = useState(false);
@@ -201,35 +200,43 @@ const navigate = useNavigate();
 
     return (
         <>
-
-  
-  <div className="header">
-  <a href="#default" className="logo">RAAS</a>
-  <div className="header-right">
-     <button className='btns' onClick={()=>navigate('/home')}>Home</button>
-    <button className="btns" onClick={() => navigate(`/Profile`)}>Profile</button>
-    <button className="btns" onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
-  </div>
-</div>
-        <div className="health-tracker-container">
-            <h2>Health & Fitness Tracker</h2>
-            
-            <div className="button-group">
-                <button 
-                    id="addRecordButton" 
-                    onClick={handleAddRecordClick}
-                    disabled={isLoading}
-                >
-                    {isLoading ? 'Processing...' : 'Add Record'}
-                </button>
-                <button 
-                    id="showHistoryButton" 
-                    onClick={handleShowHistory}
-                    disabled={isLoading || !formData.userId}
-                >
-                    {isLoading ? 'Loading...' : 'Show History'}
+        <div className="app-container">
+            {/* Header */}
+            <header className="header">
+            <a href="#default" className="logo">RAAS</a>
+            <div className="header-actions">
+                <button className="header-btn" onClick={() => navigate(`/`)}>
+                Home
                 </button>
             </div>
+            </header>
+        </div>
+        <div className="health-tracker-wrapper">
+  <div className="health-tracker-container">
+    <h2 className="tracker-title">Health & Fitness Tracker</h2>
+    <div className="button-wrapper">
+      <button
+        id="addRecordButton"
+        className="tracker-btn"
+        onClick={handleAddRecordClick}
+        disabled={isLoading}
+      >
+        {isLoading ? 'Processing...' : 'Add Record'}
+      </button>
+      <button
+        id="showHistoryButton"
+        className="tracker-btn"
+        onClick={handleShowHistory}
+        disabled={isLoading || !formData.userId}
+      >
+        {isLoading ? 'Loading...' : 'Show History'}
+      </button>
+    </div>
+  </div>
+
+
+
+
 
             {error && <div className="error-message">{error}</div>}
             {successMessage && <div className="success-message">{successMessage}</div>}

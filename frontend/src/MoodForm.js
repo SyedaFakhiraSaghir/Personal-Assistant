@@ -39,16 +39,17 @@ const MoodForm = () => {
 
   const moodList = ["😊 Happy", "😢 Sad", "😐 Neutral", "😠 Angry", "🤢 Disgusted", "🤩 Excited", "😰 Anxious", "😱 Scared"];
 
+
   return (
-    <div className={styles["app-container"]}>
-      <header className={styles.header}>
-        <a href="#default" className={styles.logo}>RAAS</a>
-        <div className={styles["header-right"]}>
-          <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
-          <button className={styles.btns} onClick={() => navigate(`/Profile`)}>Profile</button>
-          <button className={styles.btns} onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>N</button>
-        </div>
-      </header>
+    <>
+    <header className={styles.header}>
+    <a href="#default" className={styles.logo}>RAAS</a>
+    <div className={styles["header-right"]}>
+      <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
+    </div>
+  </header>
+
+    <div>
 
       <main className={styles["main-content"]}>
         <section className={styles["form-section"]}>
@@ -90,6 +91,7 @@ const MoodForm = () => {
         )}
       </main>
     </div>
+    </>
   );
 };
 
