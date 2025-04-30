@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation , useNavigate} from 'react-router-dom';
-
+import './HealthFitness.css'; // Import the CSS file
 const API_BASE_URL = 'http://localhost:9000';
 
 const HealthTracker = () => {
@@ -354,5 +354,6 @@ const navigate = useNavigate();
         </>
     );
 };
+
 
 export default HealthTracker;
