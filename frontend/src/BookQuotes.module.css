@@ -3,22 +3,28 @@
 .appContainer {
   max-width: 100%;
   margin: 0 auto;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
 .header {
-  background-color: #2c3e50;
-  padding: 15px 20px;
+  background-color: white;
+  padding: 15px 30px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(106, 17, 203, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .logo {
-  color: white;
-  font-size: 1.5em;
+  color: #6a11cb; /* Purple */
+  font-size: 1.8em;
   font-weight: bold;
   text-decoration: none;
+  font-family: 'Poppins', sans-serif;
 }
 
 .headerActions {
@@ -27,100 +33,117 @@
 }
 
 .headerBtn {
-  background-color: #3498db;
+  background-color: #6a11cb; /* Purple */
   color: white;
   border: none;
-  padding: 8px 15px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.9em;
-  transition: background-color 0.3s;
+  font-size: 1em;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 .headerBtn:hover {
-  background-color: #2980b9;
+  background-color: #4d0b9a; /* Darker purple */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(106, 17, 203, 0.2);
 }
 
 .container {
   max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
-  font-family: 'Arial', sans-serif;
+  padding: 30px 20px;
+  font-family: 'Poppins', sans-serif;
 }
 
 h1 {
   text-align: center;
-  color: #2c3e50;
+  color: #6a11cb; /* Purple */
   margin-bottom: 30px;
+  font-weight: 700;
 }
 
 .quoteSection, 
 .preferencesSection, 
 .booksSection {
   margin-bottom: 30px;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  padding: 25px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+  border: 1px solid rgba(106, 17, 203, 0.1);
 }
 
 h2 {
-  color: #2c3e50;
+  color: #6a11cb; /* Purple */
   margin-top: 0;
   border-bottom: 1px solid #eee;
   padding-bottom: 10px;
+  font-weight: 600;
 }
 
 blockquote {
   font-style: italic;
   font-size: 1.2em;
-  border-left: 4px solid #3498db;
+  border-left: 4px solid #8a2be2; /* Purple accent */
   padding-left: 15px;
   margin: 20px 0;
-  color: #34495e;
+  color: #333;
+  line-height: 1.6;
 }
 
 blockquote footer {
   font-weight: bold;
   margin-top: 10px;
-  color: #7f8c8d;
+  color: #6a11cb; /* Purple */
   font-style: normal;
 }
 
 .preferenceGroup {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 label {
   display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #34495e;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #6a11cb; /* Purple */
 }
 
 select {
   width: 100%;
-  padding: 8px;
-  border-radius: 4px;
+  padding: 10px;
+  border-radius: 8px;
   border: 1px solid #ddd;
   background-color: white;
   font-size: 1em;
+  transition: all 0.3s ease;
+}
+
+select:focus {
+  outline: none;
+  border-color: #6a11cb;
+  box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
 }
 
 button {
-  background-color: #3498db;
+  background-color: #6a11cb; /* Purple */
   color: white;
   border: none;
-  padding: 10px 15px;
-  border-radius: 4px;
+  padding: 12px 20px;
+  border-radius: 8px;
   cursor: pointer;
   font-size: 1em;
-  margin-top: 10px;
-  transition: background-color 0.3s;
+  margin-top: 15px;
+  transition: all 0.3s ease;
+  font-weight: 500;
 }
 
 button:hover {
-  background-color: #2980b9;
+  background-color: #4d0b9a; /* Darker purple */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(106, 17, 203, 0.2);
 }
 
 .bookList {
@@ -130,38 +153,59 @@ button:hover {
 
 .bookItem {
   background-color: white;
-  padding: 15px;
-  margin-bottom: 15px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: transform 0.2s;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+  border-left: 3px solid #6a11cb;
 }
 
 .bookItem:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 
 .bookItem h3 {
   margin-top: 0;
-  color: #2c3e50;
+  color: #6a11cb; /* Purple */
 }
 
 .bookItem p {
-  margin: 5px 0;
-  color: #7f8c8d;
+  margin: 8px 0;
+  color: #666;
 }
 
 .error {
-  color: #e74c3c;
-  padding: 10px;
-  background-color: #fadbd8;
-  border-radius: 4px;
+  color: #d32f2f;
+  padding: 15px;
+  background-color: #ffebee;
+  border-radius: 8px;
   margin: 20px 0;
   text-align: center;
+  border-left: 4px solid #d32f2f;
 }
 
 .loading {
   text-align: center;
-  color: #7f8c8d;
+  color: #6a11cb; /* Purple */
   font-style: italic;
+  padding: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header {
+    padding: 12px 20px;
+  }
+  
+  .container {
+    padding: 20px 15px;
+  }
+  
+  .quoteSection, 
+  .preferencesSection, 
+  .booksSection {
+    padding: 20px;
+  }
 }

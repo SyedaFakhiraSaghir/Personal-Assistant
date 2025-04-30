@@ -1,0 +1,124 @@
+.notificationsContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.notificationsContainer h2 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.toggleContainer {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 15px;
+}
+
+.toggleButton {
+  padding: 5px 10px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.toggleButton:hover {
+  background-color: #45a049;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+
+.noNotifications {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.notificationsList {
+  list-style: none;
+  padding: 0;
+}
+
+.notificationItem {
+  background-color: white;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.notificationItem.completed {
+  opacity: 0.7;
+  background-color: #f0f0f0;
+}
+
+.notificationHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.moduleIcon {
+  font-size: 20px;
+  margin-right: 10px;
+}
+
+.notificationType {
+  font-weight: bold;
+  margin-right: 10px;
+  color: #333;
+}
+
+.notificationTime {
+  margin-left: auto;
+  color: #666;
+  font-size: 0.9em;
+}
+
+.notificationMessage {
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.notificationActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.completeButton {
+  padding: 5px 10px;
+  background-color: #2196F3;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.completeButton:hover {
+  background-color: #0b7dda;
+}
+
+.deleteButton {
+  padding: 5px 10px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.deleteButton:hover {
+  background-color: #d32f2f;
+}

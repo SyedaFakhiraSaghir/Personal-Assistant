@@ -183,7 +183,29 @@ const createTables = async () => {
       content TEXT NOT NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (user_id) REFERENCES signup(userId) ON DELETE CASCADE
-    )`
+    )`,
+    `
+CREATE TABLE IF NOT EXISTS notifications (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  userId VARCHAR(255) NOT NULL,
+  module ENUM('events', 'tasks', 'health', 'finance', 'mood', 'other') NOT NULL,
+  type VARCHAR(50) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  message TEXT NOT NULL,
+  priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+  due_date DATE,
+  due_time TIME,
+  is_completed BOOLEAN DEFAULT FALSE,
+  is_recurring BOOLEAN DEFAULT FALSE,
+  recurrence_pattern VARCHAR(100),
+  notification_method ENUM('in-app', 'email', 'both') DEFAULT 'in-app',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (userId) REFERENCES signup(userId) ON DELETE CASCADE,
+  INDEX idx_user_module (userId, module),
+  INDEX idx_due_date (due_date),
+  INDEX idx_completed (is_completed)
+)`
   ];
 
   try {
@@ -282,7 +304,146 @@ app.post("/login", (req, res) => {
   });
 });
 
-// Moods Routes
+// ------------------------------------ notification reminder
+
+app.post('/api/notifications', validateUserId, (req, res) => {
+  const { userId } = req;
+  const {
+    module, type, title, message, priority,
+    due_date, due_time, is_recurring, recurrence_pattern,
+    notification_method
+  } = req.body;
+
+  if (!module || !type || !title || !message) {
+    return res.status(400).json({ error: 'Module, type, title, and message are required' });
+  }
+
+  const query = `
+    INSERT INTO notifications 
+    (userId, module, type, title, message, priority, due_date, due_time, 
+     is_recurring, recurrence_pattern, notification_method)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+  
+  db.query(query, 
+    [
+      userId, module, type, title, message, priority || 'medium',
+      due_date, due_time, is_recurring || false, recurrence_pattern || null,
+      notification_method || 'in-app'
+    ], 
+    (err, result) => {
+      if (err) {
+        console.error('Error creating notification:', err);
+        return res.status(500).json({ error: 'Failed to create notification' });
+      }
+      res.status(201).json({ 
+        message: 'Notification created successfully',
+        notification: {
+          id: result.insertId,
+          ...req.body,
+          userId,
+          is_completed: false
+        }
+      });
+    }
+  );
+});
+
+// Get upcoming notifications (for dashboard)
+app.get('/api/notifications/upcoming', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { limit = 5 } = req.query;
+  
+  const currentDate = new Date().toISOString().split('T')[0];
+  
+  const query = `
+    SELECT * FROM notifications 
+    WHERE userId = ? 
+    AND is_completed = FALSE
+    AND (due_date IS NULL OR due_date >= ?)
+    ORDER BY 
+      CASE priority
+        WHEN 'high' THEN 1
+        WHEN 'medium' THEN 2
+        WHEN 'low' THEN 3
+        ELSE 4
+      END,
+      due_date ASC,
+      due_time ASC
+    LIMIT ?
+  `;
+  
+  db.query(query, [userId, currentDate, parseInt(limit)], (err, results) => {
+    if (err) {
+      console.error('Error fetching upcoming notifications:', err);
+      return res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+    res.json(results);
+  });
+});
+
+// Get notifications by module
+app.get('/api/notifications/module/:module', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { module } = req.params;
+  const { completed, priority } = req.query;
+  
+  let query = `
+    SELECT * FROM notifications 
+    WHERE userId = ? 
+    AND module = ?
+  `;
+  
+  const params = [userId, module];
+  
+  if (completed === 'false') {
+    query += ' AND is_completed = FALSE';
+  } else if (completed === 'true') {
+    query += ' AND is_completed = TRUE';
+  }
+  
+  if (priority) {
+    query += ' AND priority = ?';
+    params.push(priority);
+  }
+  
+  query += ' ORDER BY due_date, due_time';
+  
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Error fetching module notifications:', err);
+      return res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
+    res.json(results);
+  });
+});
+
+// Snooze notification
+app.put('/api/notifications/:id/snooze', validateUserId, (req, res) => {
+  const { userId } = req;
+  const { id } = req.params;
+  const { days = 1, hours = 0 } = req.body;
+  
+  db.query(
+    `UPDATE notifications 
+     SET due_date = DATE_ADD(COALESCE(due_date, CURDATE()), INTERVAL ? DAY),
+         due_time = TIME_ADD(COALESCE(due_time, CURTIME()), INTERVAL ? HOUR)
+     WHERE id = ? AND userId = ? AND is_completed = FALSE`,
+    [days, hours, id, userId],
+    (err, result) => {
+      if (err) {
+        console.error('Error snoozing notification:', err);
+        return res.status(500).json({ error: 'Failed to snooze notification' });
+      }
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: 'Notification not found or already completed' });
+      }
+      res.json({ message: 'Notification snoozed successfully' });
+    }
+  );
+});
+
+// ----------------------------Moods Routes
 app.post("/api/moods", (req, res) => {
   const { userId, mood, description } = req.body;
 

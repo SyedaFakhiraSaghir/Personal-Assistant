@@ -31,7 +31,7 @@ const Home = () => {
             <FiCompass /> Explore
           </button>
           <button className={styles.btns} onClick={() => navigate(`/notification-reminder/?userId=${userId}`)}>
-            <FiBell /> Notifications
+            <FiBell />
           </button>
           <button className={styles.btns} onClick={handleLogout}>
             <FiLogOut /> Logout

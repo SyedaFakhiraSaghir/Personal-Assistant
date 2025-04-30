@@ -73,6 +73,7 @@ const BookQuotes = () => {
       </div>
     </header>
     </div>
+    <div style={{ height: '150px' }} aria-hidden="true"></div>
     <div className="container">
       <h1>Motivational Quotes & Book Suggestions</h1>
       

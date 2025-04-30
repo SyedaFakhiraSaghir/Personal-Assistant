@@ -1,24 +1,66 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
-import styles from './profile.module.css';
-const NotificationReminder=() =>{
-  const navigate = useNavigate();
-  const userId = localStorage.getItem("userId");
+import React, { useState, useEffect } from 'react';
+import { FaBell } from 'react-icons/fa';
+import styles from './NotificationReminder.module.css';
 
-  console.log("User ID from localStorage:", userId);
+const NotificationReminder = ({ userId }) => {
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-return (
-  
-  <>
-  <header className={styles.header}>
-    <a href="#default" className={styles.logo}>RAAS</a>
-    <div className={styles["header-right"]}>
-      <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
+  useEffect(() => {
+    const fetchUnreadNotifications = async () => {
+      try {
+        const response = await fetch(`/api/notifications/upcoming?userId=${userId}&limit=3`);
+        if (!response.ok) throw new Error('Failed to fetch notifications');
+        
+        const data = await response.json();
+        setUnreadCount(data.length);
+        setNotifications(data);
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
+    fetchUnreadNotifications();
+    const interval = setInterval(fetchUnreadNotifications, 300000); // 5 minutes
+    
+    return () => clearInterval(interval);
+  }, [userId]);
+
+  return (
+    <div className={styles.container}>
+      <button 
+        className={styles.bellButton}
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <FaBell />
+        {unreadCount > 0 && (
+          <span className={styles.badge}>{unreadCount}</span>
+        )}
+      </button>
+
+      {isOpen && (
+        <div className={styles.dropdown}>
+          {notifications.length === 0 ? (
+            <div className={styles.empty}>No new notifications</div>
+          ) : (
+            notifications.map(notification => (
+              <div key={notification.id} className={styles.dropdownItem}>
+                <div className={styles.dropdownHeader}>
+                  <strong>{notification.title}</strong>
+                  <small>{notification.module}</small>
+                </div>
+                <p>{notification.message}</p>
+              </div>
+            ))
+          )}
+          <div className={styles.dropdownFooter}>
+            <a href="/notifications">View all notifications</a>
+          </div>
+        </div>
+      )}
     </div>
-  </header>
-    <div>NotificationReminder</div>
-    </>
-  )
-}
+  );
+};
 
-export default NotificationReminder
+export default NotificationReminder;

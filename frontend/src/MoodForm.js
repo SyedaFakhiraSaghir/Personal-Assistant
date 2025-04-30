@@ -42,13 +42,18 @@ const MoodForm = () => {
 
   return (
     <>
-    <header className={styles.header}>
-    <a href="#default" className={styles.logo}>RAAS</a>
-    <div className={styles["header-right"]}>
-      <button className={styles.btns} onClick={() => navigate('/home')}>Home</button>
-    </div>
-  </header>
-
+    <div className="app-container">
+            {/* Header */}
+            <header className="header">
+            <a href="#default" className="logo">RAAS</a>
+            <div className="header-actions">
+                <button className="header-btn" onClick={() => navigate(`/home`)}>
+                Home
+                </button>
+            </div>
+            </header>
+        </div>
+        <div style={{ height: '900px' }} aria-hidden="true"></div>
     <div>
 
       <main className={styles["main-content"]}>
