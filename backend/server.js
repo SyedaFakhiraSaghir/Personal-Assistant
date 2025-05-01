@@ -5,6 +5,9 @@ const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const multer = require('multer');
+// At the top of your file
+const bcrypt = require('bcryptjs');
+const saltRounds = 10;
 
 const path = require('path');
 const fs = require('fs');
@@ -206,6 +209,13 @@ CREATE TABLE IF NOT EXISTS notifications (
   INDEX idx_user_module (userId, module),
   INDEX idx_due_date (due_date),
   INDEX idx_completed (is_completed)
+)`,`CREATE TABLE IF NOT EXISTS user_activities (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL,
+  activity_type VARCHAR(50) NOT NULL,
+  activity_data JSON,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES signup(userId) ON DELETE CASCADE
 )`
   ];
 
@@ -258,6 +268,7 @@ const validateUserId = (req, res, next) => {
   );
 };
 
+// User Authentication Routes
 // User Authentication Routes
 app.post("/signup", async (req, res) => {
   const { name, email, password, age, phone_number } = req.body;
@@ -720,34 +731,73 @@ app.put('/profile/:userId/picture', upload.single('profile_picture'), async (req
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    // Get just the filename (without full path)
-    const filename = req.file.filename;
-
-    // Update database with just the filename
-    db.query(
-      'UPDATE signup SET profile_picture = ? WHERE userId = ?',
-      [filename, userId],
-      (err, result) => {
-        if (err) {
-          console.error('Database error:', err);
-          return res.status(500).json({ error: 'Failed to update profile' });
-        }
-
-        if (result.affectedRows === 0) {
-          return res.status(404).json({ error: 'User not found' });
-        }
-
-        // Return the URL to access the image
-        res.json({
-          message: 'Profile picture updated!',
-          imageUrl: `http://localhost:9000/uploads/profile_pictures/${filename}`
-        });
-      }
+    // Get the current picture filename to delete it later
+    const [user] = await executeQuery(
+      'SELECT profile_picture FROM signup WHERE userId = ?',
+      [userId]
     );
 
+    // Update database with new filename
+    await executeQuery(
+      'UPDATE signup SET profile_picture = ? WHERE userId = ?',
+      [req.file.filename, userId]
+    );
+
+    // Delete old picture if it exists
+    if (user?.profile_picture) {
+      const oldPath = path.join(uploadDir, user.profile_picture);
+      if (fs.existsSync(oldPath)) {
+        fs.unlinkSync(oldPath);
+      }
+    }
+
+    res.json({ 
+      success: true,
+      message: 'Profile picture updated successfully',
+      imageUrl: `${req.protocol}://${req.get('host')}/uploads/profile_pictures/${req.file.filename}`
+    });
+
   } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ error: 'File upload failed' });
+    console.error('Error updating profile picture:', error);
+    res.status(500).json({ error: 'Failed to update profile picture' });
+  }
+});
+app.get('/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    // Get profile data
+    const [profile] = await executeQuery(
+      `SELECT userId, name, email, age, phone_number, profile_picture, createdAt
+       FROM signup WHERE userId = ?`,
+      [userId]
+    );
+
+    if (!profile) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Get recent activities
+    const activities = await executeQuery(
+      `SELECT activity_type, created_at 
+       FROM user_activities 
+       WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT 5`,
+      [userId]
+    );
+
+    res.json({
+      ...profile,
+      profile_picture: profile.profile_picture 
+        ? `${req.protocol}://${req.get('host')}/uploads/profile_pictures/${profile.profile_picture}`
+        : null,
+      activities
+    });
+
+  } catch (error) {
+    console.error('Error fetching profile:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
   }
 });
 app.use('/uploads', express.static('uploads'));
@@ -767,6 +817,138 @@ app.get('/api/notes', validateUserId, (req, res) => {
     }
   );
 });
+
+// Log activity
+app.post('/profile/:userId/activity', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { activityType, data } = req.body;
+
+    await executeQuery(
+      `INSERT INTO user_activities (user_id, activity_type, activity_data)
+       VALUES (?, ?, ?)`,
+      [userId, activityType, JSON.stringify(data || {})]
+    );
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.error('Error logging activity:', error);
+    res.status(500).json({ error: 'Failed to log activity' });
+  }
+});
+
+// Get user activities
+app.get('/profile/:userId/activities', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { limit = 10 } = req.query;
+
+    const activities = await executeQuery(
+      `SELECT activity_type, activity_data, created_at 
+       FROM user_activities 
+       WHERE user_id = ?
+       ORDER BY created_at DESC
+       LIMIT ?`,
+      [userId, parseInt(limit)]
+    );
+
+    // Parse JSON data
+    const results = activities.map(activity => ({
+      ...activity,
+      activity_data: activity.activity_data ? JSON.parse(activity.activity_data) : {}
+    }));
+
+    res.json(results);
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({ error: 'Failed to fetch activities' });
+  }
+});
+// Update the PUT /profile/:userId route to match this:
+app.put('/profile/:userId', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, email, age, phone_number } = req.body;
+
+    // Basic validation
+    if (!name || !email) {
+      return res.status(400).json({ error: 'Name and email are required' });
+    }
+
+    const result = await executeQuery(
+      `UPDATE signup 
+       SET name = ?, email = ?, age = ?, phone_number = ?
+       WHERE userId = ?`,
+      [name, email, age || null, phone_number || null, userId]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ 
+      success: true,
+      message: 'Profile updated successfully',
+      user: { userId, name, email, age, phone_number }
+    });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    
+    // Handle duplicate email error
+    if (error.code === 'ER_DUP_ENTRY') {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
+    
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+app.put('/profile/:userId/password', async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { currentPassword, newPassword } = req.body;
+
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    // 1. Verify current password
+    const [user] = await executeQuery(
+      'SELECT password FROM signup WHERE userId = ?',
+      [userId]
+    );
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // In a real app, you would use bcrypt.compare here
+    if (currentPassword !== user.password) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    // 2. Update to new password
+    // In production, you should hash the password with bcrypt
+    await executeQuery(
+      'UPDATE signup SET password = ? WHERE userId = ?',
+      [newPassword, userId]
+    );
+
+    res.json({ 
+      success: true,
+      message: 'Password changed successfully'
+    });
+
+  } catch (error) {
+    console.error('Error changing password:', error);
+    res.status(500).json({ error: 'Failed to change password' });
+  }
+});
+// -----------------------notes
 
 app.post('/api/notes', validateUserId, (req, res) => {
   const { userId } = req;
@@ -977,18 +1159,22 @@ app.post('/api/recipes', async (req, res) => {
   }
 });
 
+// In your PUT /api/recipes/:id route
 app.put('/api/recipes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, prep_time, cook_time, servings, user_id , meal_date} = req.body;
+    const { title, description, prep_time, cook_time, servings, user_id, meal_date } = req.body;
     
     if (!user_id) {
       return res.status(400).json({ message: 'User ID is required' });
     }
     
+    // Convert ISO date to MySQL datetime format
+    const mysqlDate = meal_date ? new Date(meal_date).toISOString().slice(0, 19).replace('T', ' ') : null;
+    
     const result = await executeQuery(
-      'UPDATE recipes SET title = ?, description = ?, prep_time = ?, cook_time = ?, servings = ?, meail_date=? WHERE id = ? AND user_id = ?',
-      [title, description, prep_time, cook_time, servings, id, user_id, meal_date]
+      'UPDATE recipes SET title = ?, description = ?, prep_time = ?, cook_time = ?, servings = ?, meal_date = ? WHERE id = ? AND user_id = ?',
+      [title, description, prep_time, cook_time, servings, mysqlDate, id, user_id]
     );
     
     if (result.affectedRows === 0) {

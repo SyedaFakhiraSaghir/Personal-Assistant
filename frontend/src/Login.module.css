@@ -45,6 +45,14 @@
   transition: all 0.3s ease;
   font-weight: 500;
 }
+.show_pass_button{
+  padding: 1px 20px;
+  background-color: #76608f46; /* Purple button */
+  color: rgba(138, 125, 125, 0.147);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
 .btns:hover {
   background-color: #4d0b9a; /* Darker purple */
@@ -140,13 +148,11 @@ body {
 
 .toggle {
   position: absolute;
-  top: 50%;
-  right: 15px;
-  transform: translateY(-50%);
-  color: #6a11cb;
+  top: -10%;
+  right: 20px;
+  color: hsla(269, 76%, 56%, 0.87);
   cursor: pointer;
 }
-
 /* Error Text */
 .error {
   display: block;

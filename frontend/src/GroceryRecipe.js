@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Bar, Pie } from 'react-chartjs-2';
 import { Chart, registerables } from 'chart.js';
 import { 
-  Calendar as CalendarIcon, 
   ShoppingCart, 
   BookOpen, 
   List, 
@@ -551,13 +550,7 @@ const RecipeGrocery = () => {
                 <List size={16} className="mr-2" />
                 List View
               </button>
-              <button 
-                className={`btn ${selectedView === 'calendar' ? 'btn-primary' : 'btn-secondary'} mt-2`}
-                onClick={() => setSelectedView('calendar')}
-              >
-                <CalendarIcon size={16} className="mr-2" />
-                Calendar
-              </button>
+              
               <button 
                 className={`btn ${selectedView === 'analytics' ? 'btn-primary' : 'btn-secondary'} mt-2`}
                 onClick={() => setSelectedView('analytics')}
@@ -797,29 +790,7 @@ const RecipeGrocery = () => {
                     </div>
                   )}
 
-                  {selectedView === 'calendar' && (
-                    <div className="card">
-                      <div className="card-header">
-                        <h3>Meal Planning Calendar</h3>
-                      </div>
-                      <div className="card-body">
-                        <div className="calendar-container">
-                          <Calendar
-                            localizer={localizer}
-                            events={events}
-                            startAccessor="start"
-                            endAccessor="end"
-                            style={{ height: '100%' }}
-                            onSelectEvent={event => {
-                              const recipe = recipes.find(r => r.id === event.id);
-                              if (recipe) editRecipe(recipe);
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
+                  
                   {selectedView === 'analytics' && (
                     <div className="card">
                       <div className="card-header">

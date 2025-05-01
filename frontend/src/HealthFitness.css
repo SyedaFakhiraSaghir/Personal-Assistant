@@ -41,7 +41,24 @@
   body {
     margin-top: 60px; /* Adjust based on header height */
   }
+  .tracker-btn {
+    padding: 10px 15px;
+    margin: 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
   
+  .tracker-btn:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
+  
+  .tracker-btn:hover:not(:disabled) {
+    background-color: #45a049;
+  }
   .health-tracker-wrapper {
     height: 100vh;
     display: flex;
@@ -80,7 +97,7 @@
   }
   
   .tracker-btn:hover {
-    background-color: #9bb8d5;
+    background-color: #a3d59b;
     transform: scale(1.05);
   }
   

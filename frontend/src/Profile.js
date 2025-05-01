@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
@@ -127,14 +128,17 @@ const Profile = () => {
 
   return (
     <>
-    <header className={styles.header}>
-        <a href="#default" className={styles.logo}>RAAS</a>
-        <div className={styles.headerRight}>
-          <button className={styles.headerBtn} onClick={() => navigate('/home')}>Home</button>
+    <div className="app-container">
+      <header className="header">
+        <a href="#default" className="logo">RAAS</a>
+        <div className="header-actions">
+          <button className="header-btn" onClick={() => navigate(`/home`)}>
+            Home
+          </button>
         </div>
       </header>
-    <div className={styles.profileApp}>
-      
+    </div>
+
     <div className="profile-card">
           <div className="profile-header">
             <h2>My Profile</h2>
@@ -252,7 +256,6 @@ const Profile = () => {
             )}
           </div>
         </div>
-      </div>
     </>
   );
 };
