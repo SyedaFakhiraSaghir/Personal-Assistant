@@ -106,16 +106,17 @@ const createTables = async () => {
       FOREIGN KEY (user_id) REFERENCES signup(userId) ON DELETE CASCADE
     )`,
     `CREATE TABLE IF NOT EXISTS recipes (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      title VARCHAR(255) NOT NULL,
-      description TEXT,
-      prep_time INT,
-      cook_time INT,
-      servings INT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      user_id VARCHAR(255) NOT NULL,
-      FOREIGN KEY (user_id) REFERENCES signup(userId) ON DELETE CASCADE
-    )`,
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  prep_time INT,
+  cook_time INT,
+  servings INT,
+  meal_date DATETIME,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  user_id VARCHAR(255) NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES signup(userId) ON DELETE CASCADE
+)`,
     // -- Notes table
 `CREATE TABLE IF NOT EXISTS events (
     id INT(11) NOT NULL AUTO_INCREMENT,
@@ -945,12 +946,8 @@ async function executeQuery(query, params) {
 app.get('/api/recipes', async (req, res) => {
   try {
     const { userId } = req.query;
-    if (!userId) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
-
     const recipes = await executeQuery(
-      'SELECT * FROM recipes WHERE user_id = ? ORDER BY created_at DESC',
+      'SELECT id, title, description, prep_time, cook_time, servings, meal_date, created_at FROM recipes WHERE user_id = ?',
       [userId]
     );
     
@@ -963,15 +960,11 @@ app.get('/api/recipes', async (req, res) => {
 
 app.post('/api/recipes', async (req, res) => {
   try {
-    const { title, description, prep_time, cook_time, servings, user_id } = req.body;
-    
-    if (!user_id) {
-      return res.status(400).json({ message: 'User ID is required' });
-    }
+    const { title, description, prep_time, cook_time, servings, user_id, meal_date } = req.body;
     
     const result = await executeQuery(
-      'INSERT INTO recipes (title, description, prep_time, cook_time, servings, user_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, description, prep_time, cook_time, servings, user_id]
+      'INSERT INTO recipes (title, description, prep_time, cook_time, servings, user_id, meal_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [title, description, prep_time, cook_time, servings, user_id, meal_date]
     );
     
     res.status(201).json({ 
@@ -987,15 +980,15 @@ app.post('/api/recipes', async (req, res) => {
 app.put('/api/recipes/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, prep_time, cook_time, servings, user_id } = req.body;
+    const { title, description, prep_time, cook_time, servings, user_id , meal_date} = req.body;
     
     if (!user_id) {
       return res.status(400).json({ message: 'User ID is required' });
     }
     
     const result = await executeQuery(
-      'UPDATE recipes SET title = ?, description = ?, prep_time = ?, cook_time = ?, servings = ? WHERE id = ? AND user_id = ?',
-      [title, description, prep_time, cook_time, servings, id, user_id]
+      'UPDATE recipes SET title = ?, description = ?, prep_time = ?, cook_time = ?, servings = ?, meail_date=? WHERE id = ? AND user_id = ?',
+      [title, description, prep_time, cook_time, servings, id, user_id, meal_date]
     );
     
     if (result.affectedRows === 0) {

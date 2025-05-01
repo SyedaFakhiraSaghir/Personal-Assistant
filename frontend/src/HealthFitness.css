@@ -47,7 +47,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #f9fff5; /* light background */
+    background-color: #f9fff500; /* light background */
   }
   
   .health-tracker-container {
@@ -80,7 +80,7 @@
   }
   
   .tracker-btn:hover {
-    background-color: #a3d59b;
+    background-color: #9bb8d5;
     transform: scale(1.05);
   }
   

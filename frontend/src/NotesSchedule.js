@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCalendarAlt, faHeartbeat} from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
+import './NotificationReminder.module.css'
 const API_BASE_URL = 'http://localhost:9000';
 
 const NotesSchedule = () => {
@@ -376,26 +376,30 @@ const NotesSchedule = () => {
 
   return (
     <>
-    <div className="app-container">
+    <div className="app-container" style={{ backgroundColor: '#f9f9f9' }}>
     {/* Header */}
-    <header className="header">
-      <a href="#default" className="logo">RAAS</a>
+    <header className="header" style={{ backgroundColor: '#e6e6fa', color: '#333' }}>
+      <a href="#default" className="logo" style={{ color: '#6a5acd' }}>RAAS</a>
       <div className="header-actions">
-        <button className="header-btn" onClick={() => navigate(`/home`)}>
+        <button 
+          className="header-btn" 
+          onClick={() => navigate(`/home`)}
+          style={{ backgroundColor: '#6a5acd', color: 'white' }}
+        >
           Home
         </button>
       </div>
     </header>
-    <div style={{ backgroundColor: '#e2f1e7', minHeight: '100vh' }}>
+    <div style={{ backgroundColor: '#f9f9f9', minHeight: '100vh' }}>
       
     <div style={{ height: '300px' }} aria-hidden="true"></div>
       <header className="hero py-5" style={{
         textAlign: 'center',
         padding: '100px 0',
-        backgroundImage: 'url("https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")',
+        backgroundImage: 'linear-gradient(rgba(230, 230, 250, 0.8), rgba(230, 230, 250, 0.8)), url("https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80")',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        color: 'white'
+        color: '#333'
       }}>
         <div className="container text-center">
           <h1 className="display-4 mb-4">Never Miss a Deadline Again</h1>
@@ -409,16 +413,20 @@ const NotesSchedule = () => {
         <div className="container">
           <div className="row">
             <div className="col-md-6 mb-4">
-              <div className="card feature-card h-100" style={{ transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}>
+              <div className="card feature-card h-100" style={{ 
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                backgroundColor: 'white',
+                border: '1px solid #e6e6fa'
+              }}>
                 <div className="card-body text-center">
-                  <FontAwesomeIcon icon={faCalendarAlt} className="fa-3x mb-3" style={{ color: '#629584' }} />
+                  <FontAwesomeIcon icon={faCalendarAlt} className="fa-3x mb-3" style={{ color: '#6a5acd' }} />
                   <h3 className="card-title">Notes</h3>
                   <p className="card-text">
                     Keep track of important information, ideas, and thoughts.
                   </p>
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={() => setActiveTab('notes')}
                   >
                     View Notes
@@ -427,16 +435,20 @@ const NotesSchedule = () => {
               </div>
             </div>
             <div className="col-md-6 mb-4">
-              <div className="card feature-card h-100" style={{ transition: 'transform 0.3s ease, box-shadow 0.3s ease' }}>
+              <div className="card feature-card h-100" style={{ 
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                backgroundColor: 'white',
+                border: '1px solid #e6e6fa'
+              }}>
                 <div className="card-body text-center">
-                  <FontAwesomeIcon icon={faHeartbeat} className="fa-3x mb-3" style={{ color: '#629584' }} />
+                  <FontAwesomeIcon icon={faHeartbeat} className="fa-3x mb-3" style={{ color: '#6a5acd' }} />
                   <h3 className="card-title">Schedule</h3>
                   <p className="card-text">
                     Manage your events, appointments, and important dates.
                   </p>
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={() => setActiveTab('schedule')}
                   >
                     View Schedule
@@ -461,7 +473,7 @@ const NotesSchedule = () => {
 
       {/* Notes Section */}
       {activeTab === 'notes' && (
-        <section id="add-reminder" className="py-5 bg-light">
+        <section id="add-reminder" className="py-5" style={{ backgroundColor: '#f9f9f9' }}>
           <div className="container">
             <h2 className="text-center mb-4">Notes Manager</h2>
             <div className="row justify-content-center">
@@ -469,7 +481,7 @@ const NotesSchedule = () => {
                 <div className="d-flex justify-content-between mb-4">
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={handleAddNoteClick}
                     disabled={isLoading}
                   >
@@ -477,7 +489,7 @@ const NotesSchedule = () => {
                   </button>
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={fetchNotes}
                     disabled={isLoading || !noteForm.userId}
                   >
@@ -486,7 +498,7 @@ const NotesSchedule = () => {
                 </div>
 
                 {showAddNote && (
-                  <div className="card shadow-sm mb-4">
+                  <div className="card shadow-sm mb-4" style={{ backgroundColor: 'white', border: '1px solid #e6e6fa' }}>
                     <div className="card-body">
                       <form onSubmit={handleNoteSubmit}>
                         <div className="mb-3">
@@ -527,7 +539,7 @@ const NotesSchedule = () => {
                           <button 
                             type="submit" 
                             className="btn" 
-                            style={{ backgroundColor: '#629584', color: 'white' }}
+                            style={{ backgroundColor: '#6a5acd', color: 'white' }}
                             disabled={isLoading || !noteForm.userId}
                           >
                             {isLoading ? 'Saving...' : 'Save Note'}
@@ -539,7 +551,7 @@ const NotesSchedule = () => {
                 )}
 
                 {notes.length > 0 && (
-                  <div className="card shadow-sm">
+                  <div className="card shadow-sm" style={{ backgroundColor: 'white', border: '1px solid #e6e6fa' }}>
                     <div className="card-body">
                       <h3 className="text-center mb-4">Your Notes</h3>
                       <div className="table-responsive">
@@ -558,7 +570,8 @@ const NotesSchedule = () => {
                                 <td>{note.description}</td>
                                 <td>
                                   <button 
-                                    className="btn btn-sm btn-primary me-2"
+                                    className="btn btn-sm me-2"
+                                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                                     onClick={() => editNote(note)}
                                     disabled={isLoading}
                                   >
@@ -588,7 +601,7 @@ const NotesSchedule = () => {
 
       {/* Schedule Section */}
       {activeTab === 'schedule' && (
-        <section id="upcoming" className="py-5">
+        <section id="upcoming" className="py-5" style={{ backgroundColor: '#f9f9f9' }}>
           <div className="container">
             <h2 className="text-center mb-4">Schedule Manager</h2>
             <div className="row justify-content-center">
@@ -596,7 +609,7 @@ const NotesSchedule = () => {
                 <div className="d-flex justify-content-between mb-4">
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={handleAddEventClick}
                     disabled={isLoading}
                   >
@@ -604,7 +617,7 @@ const NotesSchedule = () => {
                   </button>
                   <button 
                     className="btn" 
-                    style={{ backgroundColor: '#629584', color: 'white' }}
+                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                     onClick={fetchEvents}
                     disabled={isLoading || !eventForm.userId}
                   >
@@ -613,7 +626,7 @@ const NotesSchedule = () => {
                 </div>
 
                 {showAddEvent && (
-                  <div className="card shadow-sm mb-4">
+                  <div className="card shadow-sm mb-4" style={{ backgroundColor: 'white', border: '1px solid #e6e6fa' }}>
                     <div className="card-body">
                       <form onSubmit={handleEventSubmit}>
                         <div className="row">
@@ -696,7 +709,7 @@ const NotesSchedule = () => {
                           <button 
                             type="submit" 
                             className="btn" 
-                            style={{ backgroundColor: '#629584', color: 'white' }}
+                            style={{ backgroundColor: '#6a5acd', color: 'white' }}
                             disabled={isLoading || !eventForm.userId}
                           >
                             {isLoading ? 'Saving...' : 'Save Event'}
@@ -708,7 +721,7 @@ const NotesSchedule = () => {
                 )}
 
                 {events.length > 0 && (
-                  <div className="card shadow-sm">
+                  <div className="card shadow-sm" style={{ backgroundColor: 'white', border: '1px solid #e6e6fa' }}>
                     <div className="card-body">
                       <h3 className="text-center mb-4">Your Events</h3>
                       <div className="table-responsive">
@@ -733,7 +746,8 @@ const NotesSchedule = () => {
                                 <td>{event.details}</td>
                                 <td>
                                   <button 
-                                    className="btn btn-sm btn-primary me-2"
+                                    className="btn btn-sm me-2"
+                                    style={{ backgroundColor: '#6a5acd', color: 'white' }}
                                     onClick={() => editEvent(event)}
                                     disabled={isLoading}
                                   >
@@ -761,9 +775,9 @@ const NotesSchedule = () => {
         </section>
       )}
 
-      <footer className="bg-dark text-white text-center py-3">
+      <footer className="py-3" style={{ backgroundColor: '#e6e6fa', color: '#333' }}>
         <div className="container">
-          <p className="mb-0">&copy; 2024 ReminderHub. All rights reserved.</p>
+          <p className="mb-0 text-center">&copy; 2024 ReminderHub. All rights reserved.</p>
         </div>
       </footer>
     </div>
