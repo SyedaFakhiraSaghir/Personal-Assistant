@@ -1,66 +1,60 @@
-import React, { useState, useEffect } from 'react';
-import { FaBell } from 'react-icons/fa';
-import styles from './NotificationReminder.module.css';
+import { useEffect, useCallback } from 'react';
+import {
+  notifySuccess,
+  notifyInfo,
+  notifyWarning,
+  notifyError,
+} from './NotificationService';
 
-const NotificationReminder = ({ userId }) => {
-  const [unreadCount, setUnreadCount] = useState(0);
-  const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
+const NotificationReminder = () => {
+  const healthTips = [
+    { message: "🚰 Time to hydrate! Drink a glass of water", type: 'success' },
+    { message: "🍎 Time to eat your meal!", type: 'info' },
+    { message: "🏃♀️ You've been inactive for 1 hour. Time to stretch!", type: 'warning' },
+    { message: "🎉 Congratulations! You've reached your step goal", type: 'success' },
+    { message: "⚠️ Low activity level detected this week", type: 'error' },
+    { message: "🧘 Reminder: Time for your afternoon meditation", type: 'info' },
+  ];
+
+  const triggerNotification = useCallback((notification) => {
+    switch (notification.type) {
+      case 'success':
+        notifySuccess(notification.message);
+        break;
+      case 'info':
+        notifyInfo(notification.message);
+        break;
+      case 'warning':
+        notifyWarning(notification.message);
+        break;
+      case 'error':
+        notifyError(notification.message);
+        break;
+      default:
+        notifyInfo(notification.message);
+    }
+  }, []);
+
+  const showRandomNotification = useCallback(() => {
+    const randomNotification =
+      healthTips[Math.floor(Math.random() * healthTips.length)];
+    triggerNotification(randomNotification);
+  }, [healthTips, triggerNotification]);
 
   useEffect(() => {
-    const fetchUnreadNotifications = async () => {
-      try {
-        const response = await fetch(`/api/notifications/upcoming?userId=${userId}&limit=3`);
-        if (!response.ok) throw new Error('Failed to fetch notifications');
-        
-        const data = await response.json();
-        setUnreadCount(data.length);
-        setNotifications(data);
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+    const handleKeyPress = (e) => {
+      if (e.key.toLowerCase() === 'n') {
+        showRandomNotification();
       }
     };
 
-    fetchUnreadNotifications();
-    const interval = setInterval(fetchUnreadNotifications, 300000); // 5 minutes
-    
-    return () => clearInterval(interval);
-  }, [userId]);
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [showRandomNotification]);
 
-  return (
-    <div className={styles.container}>
-      <button 
-        className={styles.bellButton}
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <FaBell />
-        {unreadCount > 0 && (
-          <span className={styles.badge}>{unreadCount}</span>
-        )}
-      </button>
-
-      {isOpen && (
-        <div className={styles.dropdown}>
-          {notifications.length === 0 ? (
-            <div className={styles.empty}>No new notifications</div>
-          ) : (
-            notifications.map(notification => (
-              <div key={notification.id} className={styles.dropdownItem}>
-                <div className={styles.dropdownHeader}>
-                  <strong>{notification.title}</strong>
-                  <small>{notification.module}</small>
-                </div>
-                <p>{notification.message}</p>
-              </div>
-            ))
-          )}
-          <div className={styles.dropdownFooter}>
-            <a href="/notifications">View all notifications</a>
-          </div>
-        </div>
-      )}
-    </div>
-  );
+  return null;
 };
 
 export default NotificationReminder;

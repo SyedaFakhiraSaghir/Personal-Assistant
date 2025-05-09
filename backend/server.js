@@ -8,7 +8,6 @@ const multer = require('multer');
 // At the top of your file
 const bcrypt = require('bcryptjs');
 const saltRounds = 10;
-
 const path = require('path');
 const fs = require('fs');
 // Serve static files from uploads directory

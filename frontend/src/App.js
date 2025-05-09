@@ -11,13 +11,11 @@ import GroceryRecipe from './GroceryRecipe';
 import HealthFitness from './HealthFitness';
 import NotesSchedule from './NotesSchedule';
 import BookQuotes from './BookQuotes';
-import NotificationReminder from './NotificationReminder';
 import Chatbot from './Chatbot';
-
+import NotificationReminder from './NotificationReminder';
 function App() {
   return (
     <BrowserRouter>
-    
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
@@ -26,14 +24,13 @@ function App() {
         <Route path="/explore" element={<Explore />} />
         <Route path="/moodform" element={<MoodForm />} />
         <Route path="/mood-tracker" element={<MoodHistory />} />
-        <Route path="/finance-tracker" element={<FinanceTracker/>}/>
+        <Route path="/finance-tracker" element={<FinanceTracker />} />
         <Route path="/health-fitness" element={<HealthFitness />} />
         <Route path="/book-quotes" element={<BookQuotes />} />
         <Route path="/notes-schedule" element={<NotesSchedule />} />
-        <Route path="/recipe-grocery" element={<GroceryRecipe/>}/>
-        <Route path="/notification-reminder" element={<NotificationReminder />} />
-        <Route path="/chatbot" element={<Chatbot/>}/>
-        
+        <Route path="/recipe-grocery" element={<GroceryRecipe />} />
+        <Route path="/chatbot" element={<Chatbot />} />
+        <Route path="/notification-reminder" element={<NotificationReminder/>}/>
       </Routes>
     </BrowserRouter>
   );
