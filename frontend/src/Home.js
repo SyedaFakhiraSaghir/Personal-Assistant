@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import styles from "./Home.module.css";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,82 +18,106 @@ import {
 } from "react-icons/fa";
 import ChatBot from "react-chatbotify";
 import { notifyInfo } from "./NotificationService";
+import NotificationReminder from "./NotificationReminder";
+
+// Moved outside component to prevent recreation on every render
+const moduleTips = {
+  finance: [
+    "💰 Check weekly budget balance",
+    "💳 Review recent transactions",
+    "📈 Set monthly savings goal",
+    "🧾 Track daily expenses",
+    "🤑 Pay credit card bills",
+    "📊 Analyze spending patterns",
+    "🛑 Avoid impulse purchases",
+    "🎯 Save 10% of income",
+  ],
+  health: [
+    "🚰 Drink water! Stay hydrated",
+    "🏃♀️ Take a walk break!",
+    "🧘 Practice deep breathing",
+    "🛌 Maintain sleep schedule",
+    "🌞 Get 15 mins sunlight",
+    "📏 Track BMI monthly",
+  ],
+  grocery: [
+    "🥦 Add veggies to list",
+    "📝 Plan weekly meals",
+    "🥛 Check expiration dates",
+    "🍌 Buy seasonal fruits",
+    "🧂 Restock spices",
+    "❄️ Organize freezer",
+  ],
+  productivity: [
+    "📅 Review tomorrow's schedule",
+    "⏰ Set deadline reminders",
+    "📝 Organize notes",
+    "🗂️ Archive old notes",
+    "🔔 Take 5-minute breaks",
+    "🎯 Use Eisenhower Matrix",
+  ],
+};
 
 const Home = () => {
   const navigate = useNavigate();
   const userId = localStorage.getItem("userId");
-
   const [tipsEnabled, setTipsEnabled] = useState(false);
 
-  const moduleTips = {
-    finance: [
-      "💰 Check weekly budget balance",
-      "💳 Review recent transactions",
-      "📈 Set monthly savings goal",
-      "🧾 Track daily expenses",
-      "🤑 Pay credit card bills",
-      "📊 Analyze spending patterns",
-      "🛑 Avoid impulse purchases",
-      "🎯 Save 10% of income",
-    ],
-    health: [
-      "🚰 Drink water! Stay hydrated",
-      "🏃♀️ Take a walk break!",
-      "🧘 Practice deep breathing",
-      "🛌 Maintain sleep schedule",
-      "🌞 Get 15 mins sunlight",
-      "📏 Track BMI monthly",
-    ],
-    grocery: [
-      "🥦 Add veggies to list",
-      "📝 Plan weekly meals",
-      "🥛 Check expiration dates",
-      "🍌 Buy seasonal fruits",
-      "🧂 Restock spices",
-      "❄️ Organize freezer",
-    ],
-    productivity: [
-      "📅 Review tomorrow's schedule",
-      "⏰ Set deadline reminders",
-      "📝 Organize notes",
-      "🗂️ Archive old notes",
-      "🔔 Take 5-minute breaks",
-      "🎯 Use Eisenhower Matrix",
-    ],
-  };
+  useEffect(() => {
+    if (!tipsEnabled) return;
+  
+    const showRandomTip = () => {
+      const categories = Object.values(moduleTips);
+      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const randomTip = randomCategory[Math.floor(Math.random() * randomCategory.length)];
+      notifyInfo(randomTip, {
+        autoClose: 5000,
+        closeButton: false,
+        position: "top-right",
+      });
+    };
+  
+    // Show first tip immediately
+    showRandomTip();
+    
+    // Then set up interval for subsequent tips
+    const interval = setInterval(showRandomTip, 30000); // 30 seconds
+  
+    return () => clearInterval(interval);
+  }, [tipsEnabled]); // Removed showRandomTip from dependencies since we're recreating it
 
-  const showRandomTip = () => {
-    const categories = Object.values(moduleTips);
-    const randomCategory =
-      categories[Math.floor(Math.random() * categories.length)];
-    const randomTip =
-      randomCategory[Math.floor(Math.random() * randomCategory.length)];
-    notifyInfo(randomTip, {
-      autoClose: 5000,
-      closeButton: false,
-      position: "top-right",
+  
+
+  const toggleTips = () => {
+    const newState = !tipsEnabled;
+    setTipsEnabled(newState);
+    notifyInfo(`Tips have been ${newState ? "enabled" : "disabled"}.`, {
+      autoClose: 2000,
     });
   };
 
   useEffect(() => {
     if (!tipsEnabled) return;
 
-    const initialTimeout = setTimeout(showRandomTip, 10000);
-    const interval = setInterval(showRandomTip, 10000); // 30 seconds
-
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
+    const showRandomTip = () => {
+      const categories = Object.values(moduleTips);
+      const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+      const randomTip = randomCategory[Math.floor(Math.random() * randomCategory.length)];
+      notifyInfo(randomTip, {
+        autoClose: 5000,
+        closeButton: false,
+        position: "top-right",
+      });
     };
-  }, [tipsEnabled]);
 
-  const toggleTips = () => {
-    setTipsEnabled((prev) => !prev);
-    notifyInfo(`Tips have been ${!tipsEnabled ? "enabled" : "disabled"}.`, {
-      autoClose: 2000,
-      closeButton: false,
-    });
-  };
+    // Show first tip immediately when enabled
+    showRandomTip();
+    
+    // Set interval for subsequent tips (every 30 seconds)
+    const interval = setInterval(showRandomTip, 30000);
+
+    return () => clearInterval(interval);
+  }, [tipsEnabled]); // Only depend on tipsEnabled
 
   const handleLogout = () => {
     localStorage.removeItem("userId");
@@ -212,6 +236,9 @@ const Home = () => {
           <FiMessageSquare size={24} />
         </div>
       </div>
+
+      {/* Integrated Notification Reminder */}
+      {tipsEnabled && <NotificationReminder />}
     </>
   );
 };
